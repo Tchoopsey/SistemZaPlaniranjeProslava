@@ -4,6 +4,7 @@ public class BankovniRacun {
 
     private String jmbg;
     private String broj_racuna;
+
     public BankovniRacun(String jmbg, String broj_racuna) {
         this.jmbg = jmbg;
         this.broj_racuna = broj_racuna;

@@ -3,10 +3,10 @@ package com.model;
 public class Klijent extends Korisnik {
 
     private String jmbg;
-    private String broj_racuna;
+    private BankovniRacun broj_racuna;
     private String password;
 
-    public Klijent(String korisnicko_ime, String jmbg, String broj_racuna, String password) {
+    public Klijent(String korisnicko_ime, String jmbg, BankovniRacun broj_racuna, String password) {
         super(korisnicko_ime);
         this.jmbg = jmbg;
         this.broj_racuna = broj_racuna;
@@ -21,11 +21,11 @@ public class Klijent extends Korisnik {
         this.jmbg = jmbg;
     }
 
-    public String getBroj_racuna() {
+    public BankovniRacun getBroj_racuna() {
         return broj_racuna;
     }
 
-    public void setBroj_racuna(String broj_racuna) {
+    public void setBroj_racuna(BankovniRacun broj_racuna) {
         this.broj_racuna = broj_racuna;
     }
 
