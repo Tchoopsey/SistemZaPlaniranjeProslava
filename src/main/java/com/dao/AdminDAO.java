@@ -17,23 +17,80 @@ import com.model.Admin;
 public class AdminDAO {
 
     public List<Admin> getAllAdmin() {
-        List<Admin> vlasnici = new ArrayList<>();
-        String sql = "SELECT * FROM `Bankovni racun`";
+        List<Admin> admins = new ArrayList<>();
+        String sql = "SELECT * FROM `Admin`";
 
         try (Connection conn = DBConnection.getConnection();
         PreparedStatement ps = conn.prepareStatement(sql);
         ResultSet rs = ps.executeQuery()) {
-            // String ime = rs.getString("ime");
-            // String prezime = rs.getString("prezime");
+            String ime = rs.getString("ime");
+            String prezime = rs.getString("prezime");
             String korisnicko_ime = rs.getString("korisnicko_ime");
             String password = rs.getString("lozinka");
-            vlasnici.add(new Admin(korisnicko_ime, password));
+            admins.add(
+                new Admin(ime, prezime, korisnicko_ime, password)
+            );
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return vlasnici;
+        return admins;
     }
 
+    public boolean createAdmin(Admin admin) {
+
+        String sql = "INSERT INTO " 
+            + "Admin (ime, prezime, korisnicko_ime, lozinka) "
+            + "VALUES (?, ?, ?, ?)";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, admin.getIme());
+            ps.setString(2, admin.getPrezime());
+            ps.setString(3, admin.getKorisnicko_ime());
+            ps.setString(4, admin.getPassword());
+
+            return ps.executeUpdate() == 1;
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            System.err.println("Creating Admin user was unsuccessful!!!");
+            return false;
+        }
+    }
+
+    public boolean removeAdmin(String korisnicko_ime) {
+        String sql = "DELETE FROM Admin WHERE korisnicko_ime = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, korisnicko_ime);
+
+            return ps.executeUpdate() == 1;
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            System.err.println("Removing Admin user was unsuccessful!!!");
+            return false;
+        }
+    }
+
+    public boolean updateAdmin(Admin admin) {
+        String sql = "UPDATE Admin SET ime = ?, prezime = ?,"
+            + " korisnicko_ime = ?, lozinka = ? WHERE korisnicko_ime = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, admin.getIme());
+            ps.setString(2, admin.getPrezime());
+            ps.setString(3, admin.getKorisnicko_ime());
+            ps.setString(4, admin.getPassword());
+            ps.setString(5, admin.getKorisnicko_ime());
+
+            return ps.executeUpdate() == 1;
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            System.err.println("Updating Admin user was unsuccessful!!!");
+            return false;
+        }
+    }
 }

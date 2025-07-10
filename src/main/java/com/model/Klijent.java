@@ -6,8 +6,9 @@ public class Klijent extends Korisnik {
     private BankovniRacun broj_racuna;
     private String password;
 
-    public Klijent(String korisnicko_ime, String jmbg, BankovniRacun broj_racuna, String password) {
-        super(korisnicko_ime);
+    public Klijent(String ime, String prezime, String korisnicko_ime, String jmbg, 
+        BankovniRacun broj_racuna, String password) {
+        super(ime, prezime, korisnicko_ime);
         this.jmbg = jmbg;
         this.broj_racuna = broj_racuna;
         this.password = password;
