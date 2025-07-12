@@ -1,7 +1,3 @@
-/*
- Not sure what exactly to do about this...yet
-*/
-
 package com.dao;
 
 import java.sql.Connection;
@@ -21,16 +17,17 @@ public class AdminDAO {
         String sql = "SELECT * FROM `Admin`";
 
         try (Connection conn = DBConnection.getConnection();
-        PreparedStatement ps = conn.prepareStatement(sql);
-        ResultSet rs = ps.executeQuery()) {
-            String ime = rs.getString("ime");
-            String prezime = rs.getString("prezime");
-            String korisnicko_ime = rs.getString("korisnicko_ime");
-            String password = rs.getString("lozinka");
-            admins.add(
-                new Admin(ime, prezime, korisnicko_ime, password)
-            );
-
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                String ime = rs.getString("ime");
+                String prezime = rs.getString("prezime");
+                String korisnicko_ime = rs.getString("korisnicko_ime");
+                String password = rs.getString("lozinka");
+                admins.add(
+                    new Admin(ime, prezime, korisnicko_ime, password)
+                );
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -51,6 +48,8 @@ public class AdminDAO {
             ps.setString(3, admin.getKorisnicko_ime());
             ps.setString(4, admin.getPassword());
 
+            Admin.addAdminToList(admin);
+
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
             System.err.println(e.getMessage());
@@ -66,15 +65,18 @@ public class AdminDAO {
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, korisnicko_ime);
 
+            Admin.removeAdminFromList(korisnicko_ime);
+
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
             System.err.println(e.getMessage());
             System.err.println("Removing Admin user was unsuccessful!!!");
             return false;
         }
+
     }
 
-    public boolean updateAdmin(Admin admin) {
+    public boolean updateAdmin(Admin admin, String korisnicko_ime) {
         String sql = "UPDATE Admin SET ime = ?, prezime = ?,"
             + " korisnicko_ime = ?, lozinka = ? WHERE korisnicko_ime = ?";
 
@@ -84,7 +86,9 @@ public class AdminDAO {
             ps.setString(2, admin.getPrezime());
             ps.setString(3, admin.getKorisnicko_ime());
             ps.setString(4, admin.getPassword());
-            ps.setString(5, admin.getKorisnicko_ime());
+            ps.setString(5, korisnicko_ime);
+
+            Admin.updateAdminsList(admin, korisnicko_ime);
 
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
@@ -93,4 +97,6 @@ public class AdminDAO {
             return false;
         }
     }
+
+    
 }

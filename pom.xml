@@ -13,8 +13,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <exec.mainClass>com.gui.App</exec.mainClass>
+        <!-- <exec.mainClass>com.gui.App</exec.mainClass> -->
         <!-- <exec.mainClass>com.dbutil.DBTest</exec.mainClass> -->
+        <exec.mainClass>com.dao.DAOTesting</exec.mainClass>
         <javafx.version>21</javafx.version>
     </properties>
 

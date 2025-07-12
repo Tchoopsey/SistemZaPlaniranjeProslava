@@ -18,26 +18,27 @@ public class KlijentDAO {
         String sql = "SELECT * FROM `Klijent`";
 
         try (Connection conn = DBConnection.getConnection();
-        PreparedStatement ps = conn.prepareStatement(sql);
-        ResultSet rs = ps.executeQuery()) {
-            String ime = rs.getString("ime");
-            String prezime = rs.getString("prezime");
-            String jmbg = rs.getString("jmbg");
-            String broj_racuna = rs.getString("broj_racuna");
-            String korisnicko_ime = rs.getString("korisnicko_ime");
-            String password = rs.getString("lozinka");
-            klijenti.add(
-                new Klijent(
-                    ime,
-					prezime,
-					korisnicko_ime,
-					jmbg,
-					new BankovniRacun(jmbg,
-					broj_racuna),
-					password
-                )
-            );
-
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                String ime = rs.getString("ime");
+                String prezime = rs.getString("prezime");
+                String jmbg = rs.getString("jmbg");
+                String broj_racuna = rs.getString("broj_racuna");
+                String korisnicko_ime = rs.getString("korisnicko_ime");
+                String password = rs.getString("lozinka");
+                klijenti.add(
+                    new Klijent(
+                        ime,
+                        prezime,
+                        korisnicko_ime,
+                        jmbg,
+                        new BankovniRacun(jmbg,
+                            broj_racuna),
+                        password
+                    )
+                );
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -60,6 +61,8 @@ public class KlijentDAO {
             ps.setString(4, klijent.getJmbg());
             ps.setString(5, klijent.getPassword());
 
+            Klijent.addKlijentToList(klijent);
+
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
             System.err.println(e.getMessage());
@@ -75,6 +78,8 @@ public class KlijentDAO {
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, jmbg);
 
+            Klijent.removeKlijentFromList(jmbg);
+
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
             System.err.println(e.getMessage());
@@ -83,7 +88,7 @@ public class KlijentDAO {
         }
     }
 
-    public boolean updateKlijent(Klijent klijent) {
+    public boolean updateKlijent(Klijent klijent, String jmbg) {
         String sql = "UPDATE Klijent SET ime = ?, prezime = ?, jmbg = ?"
             + " korisnicko_ime = ?, lozinka = ? WHERE jmbg = ?";
 
@@ -94,7 +99,9 @@ public class KlijentDAO {
             ps.setString(3, klijent.getKorisnicko_ime());
             ps.setString(4, klijent.getJmbg());
             ps.setString(5, klijent.getPassword());
-            ps.setString(6, klijent.getJmbg());
+            ps.setString(6, jmbg);
+
+            Klijent.updateKlijentsList(klijent, jmbg);
 
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {

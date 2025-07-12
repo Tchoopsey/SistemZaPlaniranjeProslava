@@ -17,12 +17,13 @@ public class BankovniRacunDAO {
         String sql = "SELECT * FROM `Bankovni racun`";
 
         try (Connection conn = DBConnection.getConnection();
-        PreparedStatement ps = conn.prepareStatement(sql);
-        ResultSet rs = ps.executeQuery()) {
-            String broj_racuna = rs.getString("broj_racuna");
-            String jmbg = rs.getString("jmbg");
-            racuni.add(new BankovniRacun(jmbg, broj_racuna));
-
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                String broj_racuna = rs.getString("broj_racuna");
+                String jmbg = rs.getString("jmbg");
+                racuni.add(new BankovniRacun(jmbg, broj_racuna));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

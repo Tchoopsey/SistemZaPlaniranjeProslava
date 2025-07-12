@@ -26,4 +26,14 @@ public class Korisnik {
     public void setKorisnicko_ime(String korisnicko_ime) {
         this.korisnicko_ime = korisnicko_ime;
     }
+
+    public void setIme(String ime) {
+        this.ime = ime;
+    }
+
+    public void setPrezime(String prezime) {
+        this.prezime = prezime;
+    }
+
+
 }
