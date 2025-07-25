@@ -2,6 +2,7 @@ package com.model;
 
 public class Objekat {
 
+    int id;
     private Vlasnik vlasnik;
     private String naziv;
     private double cijena_rezervacije;
@@ -11,8 +12,9 @@ public class Objekat {
     private int broj_stolova;
     // private float zarada;
     // private boolean status;
-    public Objekat(Vlasnik vlasnik, String naziv, double cijena_rezervacije, String grad, String adresa,
+    public Objekat(int id, Vlasnik vlasnik, String naziv, double cijena_rezervacije, String grad, String adresa,
             int broj_mjesta, int broj_stolova) {
+        this.id = id;
         this.vlasnik = vlasnik;
         this.naziv = naziv;
         this.cijena_rezervacije = cijena_rezervacije;

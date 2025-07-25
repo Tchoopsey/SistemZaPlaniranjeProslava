@@ -21,6 +21,7 @@ public class VlasnikDAO {
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
+                int id = rs.getInt("id");
                 String ime = rs.getString("ime");
                 String prezime = rs.getString("prezime");
                 String jmbg = rs.getString("jmbg");
@@ -29,11 +30,12 @@ public class VlasnikDAO {
                 String password = rs.getString("lozinka");
                 vlasnici.add(
                     new Vlasnik(
+                        id,
                         ime,
                         prezime,
                         korisnicko_ime,
                         jmbg,
-                        new BankovniRacun(jmbg,
+                        new BankovniRacun(id, jmbg,
                             broj_racuna),
                         password
                     )

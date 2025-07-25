@@ -7,12 +7,14 @@ import com.dao.AdminDAO;
 
 public class Admin extends Korisnik {
 
+    private int id;
     private String password;
 
     private static List<Admin> admins = new ArrayList<>();
 
-    public Admin(String ime, String prezime, String korisnicko_ime, String password) {
+    public Admin(int id, String ime, String prezime, String korisnicko_ime, String password) {
         super(ime, prezime, korisnicko_ime);
+        this.id = id;
         this.password = password;
     }
 

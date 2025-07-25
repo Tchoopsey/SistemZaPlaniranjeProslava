@@ -7,15 +7,17 @@ import com.dao.KlijentDAO;
 
 public class Klijent extends Korisnik {
 
+    private int id;
     private String jmbg;
     private BankovniRacun broj_racuna;
     private String password;
 
     private static List<Klijent> klijenti = new ArrayList<>();
 
-    public Klijent(String ime, String prezime, String korisnicko_ime, String jmbg, 
+    public Klijent(int id, String ime, String prezime, String korisnicko_ime, String jmbg, 
         BankovniRacun broj_racuna, String password) {
         super(ime, prezime, korisnicko_ime);
+        this.id = id;
         this.jmbg = jmbg;
         this.broj_racuna = broj_racuna;
         this.password = password;

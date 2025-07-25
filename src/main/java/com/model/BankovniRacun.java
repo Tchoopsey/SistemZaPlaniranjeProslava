@@ -7,12 +7,14 @@ import com.dao.BankovniRacunDAO;
 
 public class BankovniRacun {
 
+    private int id;
     private String jmbg;
     private String broj_racuna;
 
     private static List<BankovniRacun> racuni = new ArrayList<>();
 
-    public BankovniRacun(String jmbg, String broj_racuna) {
+    public BankovniRacun(int id, String jmbg, String broj_racuna) {
+        this.id = id;
         this.jmbg = jmbg;
         this.broj_racuna = broj_racuna;
     }

@@ -2,6 +2,7 @@ package com.model;
 
 public class Proslava {
 
+    private int id;
     private Objekat objekat;
     private Klijent klijent;
     private Meni meni;
@@ -9,7 +10,8 @@ public class Proslava {
     private int broj_gostiju;
     // private double ukupna_cijena;
     // private double uplacen_iznos;
-    public Proslava(Objekat objekat, Klijent klijent, Meni meni, String datum, int broj_gostiju) {
+    public Proslava(int id, Objekat objekat, Klijent klijent, Meni meni, String datum, int broj_gostiju) {
+        this.id = id;
         this.objekat = objekat;
         this.klijent = klijent;
         this.meni = meni;

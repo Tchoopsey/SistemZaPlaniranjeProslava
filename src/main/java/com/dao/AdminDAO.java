@@ -20,12 +20,13 @@ public class AdminDAO {
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
+                int id = rs.getInt("id");
                 String ime = rs.getString("ime");
                 String prezime = rs.getString("prezime");
                 String korisnicko_ime = rs.getString("korisnicko_ime");
                 String password = rs.getString("lozinka");
                 admins.add(
-                    new Admin(ime, prezime, korisnicko_ime, password)
+                    new Admin(id, ime, prezime, korisnicko_ime, password)
                 );
             }
         } catch (SQLException e) {
