@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.dbutil.DBConnection;
 import com.model.BankovniRacun;
+import com.model.Korisnik;
 
 public class BankovniRacunDAO {
 
@@ -81,5 +82,24 @@ public class BankovniRacunDAO {
             System.err.println("Updating BankovniRacun was unsuccessful!!!");
             return false;
         }
+    }
+
+    public BankovniRacun getById(int id, Connection conn) throws SQLException {
+        String sql = "SELECT * FROM 'Bankovni Racun' WHERE id = ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    BankovniRacun bankovniRacun = new BankovniRacun();
+
+                    bankovniRacun.setBroj_racuna(rs.getString("broj_racuna"));
+
+                    return bankovniRacun;
+                }
+            }        
+        } 
+
+        return null;
     }
 }

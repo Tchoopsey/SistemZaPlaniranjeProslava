@@ -19,12 +19,7 @@ public class BankovniRacun {
         this.broj_racuna = broj_racuna;
     }
 
-    public String getJmbg() {
-        return jmbg;
-    }
-
-    public void setJmbg(String jmbg) {
-        this.jmbg = jmbg;
+    public BankovniRacun() {
     }
 
     public String getBroj_racuna() {
@@ -44,20 +39,42 @@ public class BankovniRacun {
         racuni.add(racun);
     }
 
-    public static void updateBankovniRacunsList(BankovniRacun racun, String korisnicko_ime) {
+    public static BankovniRacun getByBrojRacuna(String broj_racuna) {
+        for (BankovniRacun bankovniRacun : racuni) {
+            if (bankovniRacun.getBroj_racuna().equals(broj_racuna)) {
+                return bankovniRacun;
+            }
+        }
+
+        return null;
+    }
+
+    public static void updateBankovniRacunsList(BankovniRacun racun, String jmbg) {
         for (int i = 0; i < racuni.size(); i++) {
-            if (racuni.get(i).getKorisnicko_ime().equals(korisnicko_ime)) {
+            if (racuni.get(i).getJmbg().equals(jmbg)) {
                 racuni.set(i, racun);
                 break;
             }
         }
     }
 
-    public static void removeBankovniRacunFromList(String korisnicko_ime) {
+    public static void removeBankovniRacunFromList(String jmbg) {
         for (BankovniRacun v : racuni) {
-            if (v.getKorisnicko_ime().equals(korisnicko_ime)) {
+            if (v.getJmbg().equals(jmbg)) {
                 BankovniRacun.racuni.remove(v);
             }
         }
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getJmbg() {
+        return jmbg;
+    }
+
+    public static List<BankovniRacun> getRacuni() {
+        return racuni;
     }
 }

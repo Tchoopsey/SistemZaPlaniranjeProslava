@@ -23,10 +23,11 @@ public class AdminDAO {
                 int id = rs.getInt("id");
                 String ime = rs.getString("ime");
                 String prezime = rs.getString("prezime");
+                String jmbg = rs.getString("jmbg");
                 String korisnicko_ime = rs.getString("korisnicko_ime");
                 String password = rs.getString("lozinka");
                 admins.add(
-                    new Admin(id, ime, prezime, korisnicko_ime, password)
+                    new Admin(id, ime, prezime, jmbg, korisnicko_ime, password)
                 );
             }
         } catch (SQLException e) {
@@ -98,6 +99,4 @@ public class AdminDAO {
             return false;
         }
     }
-
-    
 }

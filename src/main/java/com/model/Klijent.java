@@ -8,34 +8,28 @@ import com.dao.KlijentDAO;
 public class Klijent extends Korisnik {
 
     private int id;
-    private String jmbg;
-    private BankovniRacun broj_racuna;
+    private String broj_racuna;
     private String password;
 
     private static List<Klijent> klijenti = new ArrayList<>();
 
-    public Klijent(int id, String ime, String prezime, String korisnicko_ime, String jmbg, 
-        BankovniRacun broj_racuna, String password) {
-        super(ime, prezime, korisnicko_ime);
+    public Klijent(int id, String ime, String prezime, String jmbg, String korisnicko_ime, 
+        String broj_racuna, String password) {
+        super(ime, prezime, jmbg, korisnicko_ime);
         this.id = id;
-        this.jmbg = jmbg;
         this.broj_racuna = broj_racuna;
         this.password = password;
     }
 
-    public String getJmbg() {
-        return jmbg;
+    public Klijent() {
+        super();
     }
 
-    public void setJmbg(String jmbg) {
-        this.jmbg = jmbg;
-    }
-
-    public BankovniRacun getBroj_racuna() {
+    public String getBroj_racuna() {
         return broj_racuna;
     }
 
-    public void setBroj_racuna(BankovniRacun broj_racuna) {
+    public void setBroj_racuna(String broj_racuna) {
         this.broj_racuna = broj_racuna;
     }
 
@@ -71,6 +65,22 @@ public class Klijent extends Korisnik {
                 Klijent.klijenti.remove(k);
             }
         }
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public static List<Klijent> getKlijenti() {
+        return klijenti;
+    }
+
+    public static void setKlijenti(List<Klijent> klijenti) {
+        Klijent.klijenti = klijenti;
     }
 
 }

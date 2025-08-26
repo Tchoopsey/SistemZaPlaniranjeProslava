@@ -9,10 +9,8 @@ import java.util.List;
 
 import com.dbutil.DBConnection;
 import com.model.Meni;
-// import com.model.Objekat;
 
 public class MeniDAO {
-
     
     public List<Meni> getAllMeni() {
         List<Meni> menii = new ArrayList<>();
@@ -24,10 +22,15 @@ public class MeniDAO {
             while (rs.next()) {
 
                 int id = rs.getInt("id");
-                // TODO: pair with ObjekatDAO to create new Meni
+                int objekat_id = rs.getInt("Objekat_id");
                 String opis = rs.getString("opis");
                 double cijena_po_osobi = rs.getDouble("cijena_po_osobi");
-                // menii.add(new Meni(cijena_po_osobi, opis));
+                menii.add(new Meni(
+                    id, 
+                    ObjekatDAO.getById(objekat_id, conn), 
+                    opis, 
+                    cijena_po_osobi)
+                );
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -39,13 +42,14 @@ public class MeniDAO {
     public boolean createMeni(Meni meni) {
 
         String sql = "INSERT INTO " 
-            + "Meni (cijena_po_osobi, opis) "
-            + "VALUES (?, ?, ?, ?, ?)";
+            + "Meni (Objekat_id, opis, cijena_po_osobi) "
+            + "VALUES (?, ?, ?)";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setDouble(1, meni.getCijena_po_osobi());
-            ps.setString(2, meni.getOpis());
+            ps.setInt(1, meni.getObjekat().getId());
+            ps.setDouble(2, meni.getCijena_po_osobi());
+            ps.setString(3, meni.getOpis());
 
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
@@ -71,8 +75,8 @@ public class MeniDAO {
     }
 
     public boolean updateMeni(Meni meni) {
-        String sql = "UPDATE Meni SET ime = ?, prezime = ?, cijena_po_osobi = ?"
-            + " korisnicko_ime = ?, lozinka = ? WHERE cijena_po_osobi = ?";
+        String sql = "UPDATE Meni SET opis = ?, cijena_po_osobi = ?"
+            + " WHERE cijena_po_osobi = ?";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -85,5 +89,24 @@ public class MeniDAO {
             System.err.println("Updating Meni was unsuccessful!!!");
             return false;
         }
+    }
+    
+    public static Meni getById(int id, Connection conn) throws SQLException {
+        String sql = "SELECT * FROM Meni WHERE id = ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Meni meni = new Meni();
+                    meni.setObjekat(ObjekatDAO.getById(rs.getInt("Objekat_id"), conn));
+                    meni.setOpis(rs.getString("opis"));
+                    meni.setCijena_po_osobi(rs.getDouble("cijena_po_osobi"));
+                    return meni;
+                }
+            }        
+        } 
+
+        return null;
     }
 }

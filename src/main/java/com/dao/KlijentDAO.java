@@ -10,6 +10,8 @@ import java.util.List;
 import com.dbutil.DBConnection;
 import com.model.BankovniRacun;
 import com.model.Klijent;
+import com.model.Korisnik;
+import com.mysql.cj.xdevapi.PreparableStatement;
 
 public class KlijentDAO {
 
@@ -35,8 +37,7 @@ public class KlijentDAO {
                         prezime,
                         korisnicko_ime,
                         jmbg,
-                        new BankovniRacun(id, jmbg,
-                            broj_racuna),
+                        broj_racuna,
                         password
                     )
                 );
@@ -112,4 +113,28 @@ public class KlijentDAO {
             return false;
         }
     }
+
+    public static Klijent getById(int id, Connection conn) throws SQLException {
+        String sql = "SELECT * FROM Klijent WHERE id = ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Klijent klijent = new Klijent();
+                    klijent.setIme(rs.getString("ime"));
+                    klijent.setPrezime(rs.getString("prezime"));
+                    klijent.setJmbg("jmbg");
+                    klijent.setKorisnicko_ime("korisnicko_ime");
+                    //klijent.setBankovni_racun();
+                    klijent.setPassword("password");
+
+                    return klijent;
+                }
+            }        
+        } 
+
+        return null;
+    }
+
 }

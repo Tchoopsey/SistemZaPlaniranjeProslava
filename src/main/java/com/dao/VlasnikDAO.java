@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.dbutil.DBConnection;
-import com.model.BankovniRacun;
 import com.model.Vlasnik;
 
 public class VlasnikDAO {
@@ -35,8 +34,7 @@ public class VlasnikDAO {
                         prezime,
                         korisnicko_ime,
                         jmbg,
-                        new BankovniRacun(id, jmbg,
-                            broj_racuna),
+                        broj_racuna,
                         password
                     )
                 );
@@ -111,4 +109,28 @@ public class VlasnikDAO {
             return false;
         }
     }
+
+    public static Vlasnik getById(int id, Connection conn) throws SQLException {
+        String sql = "SELECT * FROM Vlasnik WHERE id = ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Vlasnik vlasnik = new Vlasnik();
+                    vlasnik.setIme(rs.getString("ime"));
+                    vlasnik.setPrezime(rs.getString("prezime"));
+                    vlasnik.setJmbg(rs.getString("jmbg"));
+                    vlasnik.setKorisnicko_ime(rs.getString("korisnicko_ime"));
+                    vlasnik.setBroj_racuna(rs.getString("broj_racuna"));
+                    vlasnik.setPassword(rs.getString("password"));
+
+                    return vlasnik;
+                }
+            }        
+        } 
+
+        return null;
+    }
+
 }

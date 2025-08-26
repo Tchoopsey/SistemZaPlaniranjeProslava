@@ -8,34 +8,36 @@ import com.dao.VlasnikDAO;
 public class Vlasnik extends Korisnik {
 
     private int id;
-    private String jmbg;
-    private BankovniRacun broj_racuna;
+    private String broj_racuna;
     private String password;
 
     private static List<Vlasnik> vlasnici = new ArrayList<>();
 
-    public Vlasnik(int id, String ime, String prezime, String korisnicko_ime, String jmbg, 
-        BankovniRacun broj_racuna, String password) {
-        super(ime, prezime, korisnicko_ime);
+    public Vlasnik(int id, String ime, String prezime,  String jmbg, 
+        String korisnicko_ime, String broj_racuna, String password) {
+        super(ime, prezime, jmbg, korisnicko_ime);
         this.id = id;
-        this.jmbg = jmbg;
         this.broj_racuna = broj_racuna;
         this.password = password;
     }
 
-    public String getJmbg() {
-        return jmbg;
+    public Vlasnik() {
+        super();
     }
 
-    public void setJmbg(String jmbg) {
-        this.jmbg = jmbg;
+    public int getId() {
+        return id;
     }
 
-    public BankovniRacun getBroj_racuna() {
+    public static List<Vlasnik> getVlasnici() {
+        return vlasnici;
+    }
+
+    public String getBroj_racuna() {
         return broj_racuna;
     }
 
-    public void setBroj_racuna(BankovniRacun broj_racuna) {
+    public void setBroj_racuna(String broj_racuna) {
         this.broj_racuna = broj_racuna;
     }
 
@@ -73,5 +75,13 @@ public class Vlasnik extends Korisnik {
         }
     }
 
+    public static Vlasnik getById(int id) {
+        for (Vlasnik vlasnik : vlasnici) {
+            if (vlasnik.getId() == id) {
+                return vlasnik;
+            }
+        }
 
+        return null;
+    }
 }
