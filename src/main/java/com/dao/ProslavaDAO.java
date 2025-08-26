@@ -11,7 +11,7 @@ import com.model.Proslava;
 
 public class ProslavaDAO {
 
-    public List<Proslava> getAllProslavalovi(Connection conn) {
+    public List<Proslava> getAllProslave(Connection conn) {
         List<Proslava> proslave = new ArrayList<>();
         String sql = "SELECT * FROM Meni";
 
@@ -61,6 +61,8 @@ public class ProslavaDAO {
             ps.setDouble(6, proslava.getUkupna_cijena());
             ps.setDouble(7, proslava.getUplacen_iznos());
 
+            Proslava.addProslavaToList(proslava);
+
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
             System.err.println(e.getMessage());
@@ -74,6 +76,8 @@ public class ProslavaDAO {
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
+
+            Proslava.removeProslavaFromList(id);
 
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
@@ -97,6 +101,8 @@ public class ProslavaDAO {
             ps.setDouble(6, proslava.getUkupna_cijena());
             ps.setDouble(7, proslava.getUplacen_iznos());
             ps.setInt(8, id);
+
+            Proslava.updateProslavaList(proslava, id);
 
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {

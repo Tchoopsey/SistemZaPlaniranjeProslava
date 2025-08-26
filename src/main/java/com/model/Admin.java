@@ -1,5 +1,6 @@
 package com.model;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,9 +29,9 @@ public class Admin extends Korisnik {
         this.password = password;
     }
 
-    public static void createAdminsList() {
+    public static void createAdminsList(Connection conn) {
         AdminDAO dao = new AdminDAO();
-        admins = dao.getAllAdmin();
+        admins = dao.getAllAdmin(conn);
     }
 
     public static void addAdminToList(Admin admin) {

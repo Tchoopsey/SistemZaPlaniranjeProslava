@@ -7,17 +7,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.dbutil.DBConnection;
 import com.model.Vlasnik;
 
 public class VlasnikDAO {
 
-    public List<Vlasnik> getAllVlasnik() {
+    public List<Vlasnik> getAllVlasnik(Connection conn) {
         List<Vlasnik> vlasnici = new ArrayList<>();
         String sql = "SELECT * FROM `Vlasnik`";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
+        try (PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 int id = rs.getInt("id");
@@ -46,14 +44,13 @@ public class VlasnikDAO {
         return vlasnici;
     }
 
-    public boolean createVlasnik(Vlasnik vlasnik) {
+    public boolean createVlasnik(Vlasnik vlasnik, Connection conn) {
 
         String sql = "INSERT INTO " 
             + "Vlasnik (ime, prezime, korisnicko_ime, jmbg, lozinka) "
             + "VALUES (?, ?, ?, ?, ?)";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, vlasnik.getIme());
             ps.setString(2, vlasnik.getPrezime());
             ps.setString(3, vlasnik.getKorisnicko_ime());
@@ -70,11 +67,10 @@ public class VlasnikDAO {
         }
     }
 
-    public boolean removeVlasnik(String jmbg) {
+    public boolean removeVlasnik(String jmbg, Connection conn) {
         String sql = "DELETE FROM Vlasnik WHERE jmbg = ?";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, jmbg);
 
             Vlasnik.removeVlasnikFromList(jmbg);
@@ -87,12 +83,11 @@ public class VlasnikDAO {
         }
     }
 
-    public boolean updateVlasnik(Vlasnik vlasnik, String jmbg) {
+    public boolean updateVlasnik(Vlasnik vlasnik, String jmbg, Connection conn) {
         String sql = "UPDATE Vlasnik SET ime = ?, prezime = ?, jmbg = ?"
             + " korisnicko_ime = ?, lozinka = ? WHERE jmbg = ?";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, vlasnik.getIme());
             ps.setString(2, vlasnik.getPrezime());
             ps.setString(3, vlasnik.getKorisnicko_ime());

@@ -1,7 +1,12 @@
 package com.model;
 
+import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import com.dao.ProslavaDAO;
 
 public class Proslava {
 
@@ -14,7 +19,7 @@ public class Proslava {
     private double ukupna_cijena;
     private double uplacen_iznos;
 
-    private static Map<Klijent, Proslava> sveProslave = new HashMap<>();
+    private static List<Proslava> sveProslave = new ArrayList<>();
 
     public Proslava(int id, Objekat objekat, Klijent klijent, Meni meni, 
         String datum, int broj_gostiju, double ukupna_cijena, double uplacen_iznos) {
@@ -71,11 +76,11 @@ public class Proslava {
         this.uplacen_iznos = uplacen_iznos;
     }
 
-    public static Map<Klijent, Proslava> getSveProslave() {
+    public static List<Proslava> getSveProslave() {
         return sveProslave;
     }
 
-    public static void setSveProslave(Map<Klijent, Proslava> sveProslave) {
+    public static void setSveProslave(List<Proslava> sveProslave) {
         Proslava.sveProslave = sveProslave;
     }
 
@@ -101,6 +106,32 @@ public class Proslava {
 
     public double getUplacen_iznos() {
         return uplacen_iznos;
+    }
+
+    public static void createProslavaList(Connection conn) {
+        ProslavaDAO dao = new ProslavaDAO();
+        sveProslave = dao.getAllProslave(conn);
+    }
+
+    public static void addProslavaToList(Proslava proslava) {
+        sveProslave.add(proslava);
+    }
+
+    public static void updateProslavaList(Proslava proslava, int id) {
+        for (int i = 0; i < sveProslave.size(); i++) {
+            if (sveProslave.get(i).getId() == id) {
+                sveProslave.set(i, proslava);
+                break;
+            }
+        }
+    }
+
+    public static void removeProslavaFromList(int id) {
+        for (Proslava proslava : sveProslave) {
+            if (proslava.getId() == id) {
+                Proslava.sveProslave.remove(proslava);
+            }
+        }
     }
 
 }

@@ -7,20 +7,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.dbutil.DBConnection;
-import com.model.BankovniRacun;
 import com.model.Klijent;
-import com.model.Korisnik;
-import com.mysql.cj.xdevapi.PreparableStatement;
 
 public class KlijentDAO {
 
-    public List<Klijent> getAllKlijent() {
+    public List<Klijent> getAllKlijent(Connection conn) {
         List<Klijent> klijenti = new ArrayList<>();
         String sql = "SELECT * FROM `Klijent`";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
+        try (PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 int id = rs.getInt("id");
@@ -42,6 +37,7 @@ public class KlijentDAO {
                     )
                 );
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -50,19 +46,19 @@ public class KlijentDAO {
     }
 
 
-    public boolean createKlijent(Klijent klijent) {
+    public boolean createKlijent(Klijent klijent, Connection conn) {
 
         String sql = "INSERT INTO " 
-            + "Klijent (ime, prezime, korisnicko_ime, jmbg, lozinka) "
-            + "VALUES (?, ?, ?, ?, ?)";
+            + "Klijent (ime, prezime, jmbg, broj_racuna, korisnicko_ime, lozinka) "
+            + "VALUES (?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, klijent.getIme());
             ps.setString(2, klijent.getPrezime());
-            ps.setString(3, klijent.getKorisnicko_ime());
-            ps.setString(4, klijent.getJmbg());
-            ps.setString(5, klijent.getPassword());
+            ps.setString(3, klijent.getJmbg());
+            ps.setString(4, klijent.getBroj_racuna());
+            ps.setString(5, klijent.getKorisnicko_ime());
+            ps.setString(6, klijent.getPassword());
 
             Klijent.addKlijentToList(klijent);
 
@@ -74,11 +70,10 @@ public class KlijentDAO {
         }
     }
 
-    public boolean removeKlijent(String jmbg) {
+    public boolean removeKlijent(String jmbg, Connection conn) {
         String sql = "DELETE FROM Klijent WHERE jmbg = ?";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, jmbg);
 
             Klijent.removeKlijentFromList(jmbg);
@@ -91,18 +86,18 @@ public class KlijentDAO {
         }
     }
 
-    public boolean updateKlijent(Klijent klijent, String jmbg) {
+    public boolean updateKlijent(Klijent klijent, String jmbg, Connection conn) {
         String sql = "UPDATE Klijent SET ime = ?, prezime = ?, jmbg = ?"
-            + " korisnicko_ime = ?, lozinka = ? WHERE jmbg = ?";
+            + ", broj_racuna = ?, korisnicko_ime = ?, lozinka = ? WHERE jmbg = ?";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, klijent.getIme());
             ps.setString(2, klijent.getPrezime());
-            ps.setString(3, klijent.getKorisnicko_ime());
-            ps.setString(4, klijent.getJmbg());
-            ps.setString(5, klijent.getPassword());
-            ps.setString(6, jmbg);
+            ps.setString(3, klijent.getJmbg());
+            ps.setString(4, klijent.getBroj_racuna());
+            ps.setString(5, klijent.getKorisnicko_ime());
+            ps.setString(6, klijent.getPassword());
+            ps.setString(7, jmbg);
 
             Klijent.updateKlijentsList(klijent, jmbg);
 
@@ -125,8 +120,8 @@ public class KlijentDAO {
                     klijent.setIme(rs.getString("ime"));
                     klijent.setPrezime(rs.getString("prezime"));
                     klijent.setJmbg("jmbg");
+                    klijent.setBroj_racuna("broj_racuna");
                     klijent.setKorisnicko_ime("korisnicko_ime");
-                    //klijent.setBankovni_racun();
                     klijent.setPassword("password");
 
                     return klijent;

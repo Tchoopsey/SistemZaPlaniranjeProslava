@@ -1,5 +1,6 @@
 package com.model;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,13 +11,23 @@ public class BankovniRacun {
     private int id;
     private String jmbg;
     private String broj_racuna;
+    private double stanje;
+
+    public double getStanje() {
+        return stanje;
+    }
+
+    public void setStanje(double stanje) {
+        this.stanje = stanje;
+    }
 
     private static List<BankovniRacun> racuni = new ArrayList<>();
 
-    public BankovniRacun(int id, String jmbg, String broj_racuna) {
+    public BankovniRacun(int id, String jmbg, String broj_racuna, double stanje) {
         this.id = id;
         this.jmbg = jmbg;
         this.broj_racuna = broj_racuna;
+        this.stanje = stanje;
     }
 
     public BankovniRacun() {
@@ -30,9 +41,9 @@ public class BankovniRacun {
         this.broj_racuna = broj_racuna;
     }
 
-    public static void createBankovniRacunsList() {
+    public static void createBankovniRacunsList(Connection conn) {
         BankovniRacunDAO dao = new BankovniRacunDAO();
-        racuni = dao.getAllBankovniRacun();
+        racuni = dao.getAllBankovniRacun(conn);
     }
 
     public static void addBankovniRacunToList(BankovniRacun racun) {

@@ -13,12 +13,11 @@ import com.model.StanjeObjekta;
 
 public class ObjekatDAO {
 
-    public List<Objekat> getAllObjekti() {
+    public List<Objekat> getAllObjekti(Connection conn) {
         List<Objekat> objekti = new ArrayList<>();
         String sql = "SELECT * FROM Meni";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
+        try (PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 int id = rs.getInt("id");
@@ -56,15 +55,14 @@ public class ObjekatDAO {
         return objekti;
     }
 
-    public boolean createObjekat(Objekat objekat) {
+    public boolean createObjekat(Objekat objekat, Connection conn) {
 
         String sql = "INSERT INTO " 
             + "Objekat (Vlasnik_id, naziv, cijena_rezervacije, grad, "
             + "adresa, broj_mjesta, broj_stolova, datumi, zarada, status"
             + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, objekat.getVlasnik().getId());
             ps.setString(2, objekat.getNaziv());
             ps.setDouble(3, objekat.getCijena_rezervacije());
@@ -75,6 +73,8 @@ public class ObjekatDAO {
             ps.setString(8, objekat.getDatumi());
             ps.setDouble(9, objekat.getZarada());
             ps.setString(10, StanjeObjekta.toString(objekat.getStatus()));
+
+            Objekat.createObjekatList(conn);
 
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
@@ -90,6 +90,8 @@ public class ObjekatDAO {
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, naziv);
 
+            Objekat.removeObjekatFromList(naziv);
+
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
             System.err.println(e.getMessage());
@@ -98,13 +100,12 @@ public class ObjekatDAO {
         }
     }
 
-    public boolean updateObjekat(Objekat objekat, String naziv) {
+    public boolean updateObjekat(Objekat objekat, String naziv, Connection conn) {
         String sql = "UPDATE Objekat SET Vlasnik_id = ?, naziv = ?, cijena_rezervacije = ?,"
             + " grad = ?, adresa = ?, broj_mjesta = ?, broj_stolova = ?, datumi = ?, zarada = ?,"
             + " status = ? WHERE naziv = ?";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, objekat.getVlasnik().getId());
             ps.setString(2, objekat.getNaziv());
             ps.setDouble(3, objekat.getCijena_rezervacije());
@@ -116,6 +117,8 @@ public class ObjekatDAO {
             ps.setDouble(9, objekat.getZarada());
             ps.setString(10, StanjeObjekta.toString(objekat.getStatus()));
             ps.setString(11, naziv);
+
+            Objekat.updateObjekatList(objekat, naziv);
 
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {

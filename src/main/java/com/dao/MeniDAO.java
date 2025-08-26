@@ -12,12 +12,11 @@ import com.model.Meni;
 
 public class MeniDAO {
     
-    public List<Meni> getAllMeni() {
+    public List<Meni> getAllMeni(Connection conn) {
         List<Meni> menii = new ArrayList<>();
         String sql = "SELECT * FROM Meni";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
+        try (PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
 
@@ -51,6 +50,8 @@ public class MeniDAO {
             ps.setDouble(2, meni.getCijena_po_osobi());
             ps.setString(3, meni.getOpis());
 
+            Meni.addMeniToList(meni);
+
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
             System.err.println(e.getMessage());
@@ -59,12 +60,13 @@ public class MeniDAO {
         }
     }
 
-    public boolean removeMeni(String cijena_po_osobi) {
-        String sql = "DELETE FROM Meni WHERE cijena_po_osobi = ?";
+    public boolean removeMeni(int id, Connection conn) {
+        String sql = "DELETE FROM Meni WHERE id = ?";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, cijena_po_osobi);
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+
+            Meni.removeMeniFromList(id);
 
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
@@ -74,14 +76,19 @@ public class MeniDAO {
         }
     }
 
-    public boolean updateMeni(Meni meni) {
-        String sql = "UPDATE Meni SET opis = ?, cijena_po_osobi = ?"
-            + " WHERE cijena_po_osobi = ?";
+    public boolean updateMeni(Meni meni, Connection conn) {
+        String sql = "UPDATE Meni SET Objekat_id = ?, opis = ?, cijena_po_osobi = ?"
+            + " WHERE id = ?";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setDouble(1, meni.getCijena_po_osobi());
-            ps.setString(2, meni.getOpis());
+        int id = meni.getId();
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, meni.getObjekat().getId());
+            ps.setDouble(2, meni.getCijena_po_osobi());
+            ps.setString(3, meni.getOpis());
+            ps.setInt(4, id);
+
+            Meni.updateMeniList(meni, id);
 
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {

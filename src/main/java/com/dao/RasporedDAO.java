@@ -11,7 +11,7 @@ import com.model.Raspored;
 
 public class RasporedDAO {
 
-    public List<Raspored> getAllRasporedlovi(Connection conn) {
+    public List<Raspored> getAllRasporedi(Connection conn) {
         List<Raspored> rasporedi = new ArrayList<>();
         String sql = "SELECT * FROM Raspored";
 
@@ -48,6 +48,8 @@ public class RasporedDAO {
             ps.setInt(2, raspored.getProslava().getId());
             ps.setString(3, Raspored.gostiFromList(raspored.getGosti()));
 
+            Raspored.addRasporedToList(raspored);
+
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
             System.err.println(e.getMessage());
@@ -62,6 +64,8 @@ public class RasporedDAO {
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
 
+            Raspored.removeRasporedFromList(id);
+
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
             System.err.println(e.getMessage());
@@ -70,15 +74,17 @@ public class RasporedDAO {
         }
     }
 
-    public boolean updateRaspored(Raspored proslava, int id, Connection conn) {
+    public boolean updateRaspored(Raspored raspored, int id, Connection conn) {
         String sql = "UPDATE Raspored SET Sto_id = ?, Proslava_id = ?," 
             + " gosti WHERE naziv = ?";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, proslava.getSto().getId());
-            ps.setInt(2, proslava.getProslava().getId());
-            ps.setString(3, Raspored.gostiFromList(proslava.getGosti()));
+            ps.setInt(1, raspored.getSto().getId());
+            ps.setInt(2, raspored.getProslava().getId());
+            ps.setString(3, Raspored.gostiFromList(raspored.getGosti()));
             ps.setInt(4, id);
+
+            Raspored.updateRasporedList(raspored, id);
 
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {

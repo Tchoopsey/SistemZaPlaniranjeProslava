@@ -1,5 +1,6 @@
 package com.model;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,9 +50,9 @@ public class Vlasnik extends Korisnik {
         this.password = password;
     }
 
-    public static void createVlasniksList() {
+    public static void createVlasniksList(Connection conn) {
         VlasnikDAO dao = new VlasnikDAO();
-        vlasnici = dao.getAllVlasnik();
+        vlasnici = dao.getAllVlasnik(conn);
     }
 
     public static void addVlasnikToList(Vlasnik vlasnik) {

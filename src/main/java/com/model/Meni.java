@@ -1,7 +1,10 @@
 package com.model;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.dao.MeniDAO;
 
 public class Meni {
 
@@ -60,5 +63,31 @@ public class Meni {
 
     public static void setSviMeniji(List<Meni> sviMeniji) {
         Meni.sviMeniji = sviMeniji;
+    }
+
+    public static void createMeniList(Connection conn) {
+        MeniDAO dao = new MeniDAO();
+        sviMeniji = dao.getAllMeni(conn);
+    }
+
+    public static void addMeniToList(Meni meni) {
+        sviMeniji.add(meni);
+    }
+
+    public static void updateMeniList(Meni meni, int id) {
+        for (int i = 0; i < sviMeniji.size(); i++) {
+            if (sviMeniji.get(i).getId() == id) {
+                sviMeniji.set(i, meni);
+                break;
+            }
+        }
+    }
+
+    public static void removeMeniFromList(int id) {
+        for (Meni meni : sviMeniji) {
+            if (meni.getId() == id) {
+                Meni.sviMeniji.remove(meni);
+            }
+        }
     }
 }

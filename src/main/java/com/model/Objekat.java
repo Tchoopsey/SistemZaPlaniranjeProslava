@@ -1,7 +1,10 @@
 package com.model;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.dao.ObjekatDAO;
 
 public class Objekat {
 
@@ -143,5 +146,31 @@ public class Objekat {
     //     return null;
     // }
     
+
+    public static void createObjekatList(Connection conn) {
+        ObjekatDAO dao = new ObjekatDAO();
+        sviObjekti = dao.getAllObjekti(conn);
+    }
+
+    public static void addObjekatToList(Objekat objekat) {
+        sviObjekti.add(objekat);
+    }
+
+    public static void updateObjekatList(Objekat objekat, String naziv) {
+        for (int i = 0; i < sviObjekti.size(); i++) {
+            if (sviObjekti.get(i).getNaziv().equals(naziv)) {
+                sviObjekti.set(i, objekat);
+                break;
+            }
+        }
+    }
+
+    public static void removeObjekatFromList(String naziv) {
+        for (Objekat objekat : sviObjekti) {
+            if (objekat.getNaziv().equals(naziv)) {
+                Objekat.sviObjekti.remove(objekat);
+            }
+        }
+    }
 
 }

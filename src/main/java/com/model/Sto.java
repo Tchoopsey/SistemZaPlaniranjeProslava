@@ -1,7 +1,10 @@
 package com.model;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.dao.StoDAO;
 
 public class Sto {
 
@@ -50,6 +53,32 @@ public class Sto {
 
     public static void setSviStolovi(List<Sto> sviStolovi) {
         Sto.sviStolovi = sviStolovi;
+    }
+
+    public static void createStoList(Connection conn) {
+        StoDAO dao = new StoDAO();
+        sviStolovi = dao.getAllStolovi(conn);
+    }
+
+    public static void addStoToList(Sto raspored) {
+        sviStolovi.add(raspored);
+    }
+
+    public static void updateStoList(Sto raspored, int id) {
+        for (int i = 0; i < sviStolovi.size(); i++) {
+            if (sviStolovi.get(i).getId() == id) {
+                sviStolovi.set(i, raspored);
+                break;
+            }
+        }
+    }
+
+    public static void removeStoFromList(int id) {
+        for (Sto raspored : sviStolovi) {
+            if (raspored.getId() == id) {
+                Sto.sviStolovi.remove(raspored);
+            }
+        }
     }
 
 }

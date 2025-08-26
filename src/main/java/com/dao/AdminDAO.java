@@ -7,17 +7,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.dbutil.DBConnection;
 import com.model.Admin;
 
 public class AdminDAO {
 
-    public List<Admin> getAllAdmin() {
+    public List<Admin> getAllAdmin(Connection conn) {
         List<Admin> admins = new ArrayList<>();
         String sql = "SELECT * FROM `Admin`";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
+        try (PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 int id = rs.getInt("id");
@@ -37,14 +35,13 @@ public class AdminDAO {
         return admins;
     }
 
-    public boolean createAdmin(Admin admin) {
+    public boolean createAdmin(Admin admin, Connection conn) {
 
         String sql = "INSERT INTO " 
             + "Admin (ime, prezime, korisnicko_ime, lozinka) "
             + "VALUES (?, ?, ?, ?)";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, admin.getIme());
             ps.setString(2, admin.getPrezime());
             ps.setString(3, admin.getKorisnicko_ime());
@@ -60,11 +57,10 @@ public class AdminDAO {
         }
     }
 
-    public boolean removeAdmin(String korisnicko_ime) {
+    public boolean removeAdmin(String korisnicko_ime, Connection conn) {
         String sql = "DELETE FROM Admin WHERE korisnicko_ime = ?";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, korisnicko_ime);
 
             Admin.removeAdminFromList(korisnicko_ime);
@@ -78,12 +74,11 @@ public class AdminDAO {
 
     }
 
-    public boolean updateAdmin(Admin admin, String korisnicko_ime) {
+    public boolean updateAdmin(Admin admin, String korisnicko_ime, Connection conn) {
         String sql = "UPDATE Admin SET ime = ?, prezime = ?,"
             + " korisnicko_ime = ?, lozinka = ? WHERE korisnicko_ime = ?";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, admin.getIme());
             ps.setString(2, admin.getPrezime());
             ps.setString(3, admin.getKorisnicko_ime());

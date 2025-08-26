@@ -7,24 +7,22 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.dbutil.DBConnection;
 import com.model.BankovniRacun;
-import com.model.Korisnik;
 
 public class BankovniRacunDAO {
 
-    public List<BankovniRacun> getAllBankovniRacun() {
+    public List<BankovniRacun> getAllBankovniRacun(Connection conn) {
         List<BankovniRacun> racuni = new ArrayList<>();
         String sql = "SELECT * FROM `Bankovni racun`";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
+        try (PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 int id = rs.getInt("id");
                 String broj_racuna = rs.getString("broj_racuna");
                 String jmbg = rs.getString("jmbg");
-                racuni.add(new BankovniRacun(id, jmbg, broj_racuna));
+                double stanje = rs.getDouble("stanje");
+                racuni.add(new BankovniRacun(id, jmbg, broj_racuna, stanje));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -33,16 +31,18 @@ public class BankovniRacunDAO {
         return racuni;
     }
 
-    public boolean createbankovni_racun(BankovniRacun bankovni_racun) {
+    public boolean createBankovniRacun(BankovniRacun bankovni_racun, Connection conn) {
 
         String sql = "INSERT INTO " 
-            + "bankovni_racun (jmbg, broj_racuna) "
-            + "VALUES (?, ?, ?, ?, ?)";
+            + "`Bankovni racun` (jmbg, broj_racuna, stanje) "
+            + "VALUES (?, ?, ?)";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, bankovni_racun.getJmbg());
             ps.setString(2, bankovni_racun.getBroj_racuna());
+            ps.setDouble(3, bankovni_racun.getStanje());
+
+            BankovniRacun.createBankovniRacunsList(conn);
 
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
@@ -52,13 +52,14 @@ public class BankovniRacunDAO {
         }
     }
 
-    public boolean removebankovni_racun(String jmbg) {
-        String sql = "DELETE FROM bankovni_racun WHERE jmbg = ?";
+    public boolean removeBankovniRacun(String jmbg, Connection conn) {
+        String sql = "DELETE FROM `Bankovni racun` WHERE jmbg = ?";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, jmbg);
 
+            BankovniRacun.removeBankovniRacunFromList(jmbg);
+            
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
             System.err.println(e.getMessage());
@@ -67,14 +68,19 @@ public class BankovniRacunDAO {
         }
     }
 
-    public boolean updatebankovni_racun(BankovniRacun bankovni_racun) {
-        String sql = "UPDATE bankovni_racun SET ime = ?, prezime = ?, jmbg = ?"
-            + " korisnicko_ime = ?, lozinka = ? WHERE jmbg = ?";
+    public boolean updateBankovniRacun(BankovniRacun bankovni_racun, Connection conn) {
+        String sql = "UPDATE `Bankovni racun` SET jmbg = ?, broj_racuna = ?,"
+            + " stanje = ? WHERE jmbg = ?";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        String jmbg = bankovni_racun.getJmbg();
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, bankovni_racun.getJmbg());
             ps.setString(2, bankovni_racun.getBroj_racuna());
+            ps.setDouble(3, bankovni_racun.getStanje());
+            ps.setString(4, jmbg);
+
+            BankovniRacun.updateBankovniRacunsList(bankovni_racun, jmbg);
 
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
@@ -85,7 +91,7 @@ public class BankovniRacunDAO {
     }
 
     public BankovniRacun getById(int id, Connection conn) throws SQLException {
-        String sql = "SELECT * FROM 'Bankovni Racun' WHERE id = ?";
+        String sql = "SELECT * FROM `Bankovni Racun` WHERE id = ?";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);

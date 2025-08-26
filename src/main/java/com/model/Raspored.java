@@ -1,8 +1,11 @@
 package com.model;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import com.dao.RasporedDAO;
 
 public class Raspored {
 
@@ -11,7 +14,7 @@ public class Raspored {
     private Proslava proslava;
     private List<String> gosti;
 
-    private static List<Sto> sviStolovi = new ArrayList<>();
+    private static List<Raspored> sviRasporedi = new ArrayList<>();
 
     public Raspored(int id, Sto sto, Proslava proslava, List<String> gosti) {
         this.id = id;
@@ -55,12 +58,12 @@ public class Raspored {
         this.gosti = gosti;
     }
 
-    public static List<Sto> getSviStolovi() {
-        return sviStolovi;
+    public static List<Raspored> getSviStolovi() {
+        return sviRasporedi;
     }
 
-    public static void setSviStolovi(List<Sto> sviStolovi) {
-        Raspored.sviStolovi = sviStolovi;
+    public static void setSviStolovi(List<Raspored> sviRasporedi) {
+        Raspored.sviRasporedi = sviRasporedi;
     }
 
     public static List<String> gostiFromString(String string) {
@@ -74,4 +77,31 @@ public class Raspored {
 
         return gosti;
     }
+
+    public static void createRasporedList(Connection conn) {
+        RasporedDAO dao = new RasporedDAO();
+        sviRasporedi = dao.getAllRasporedi(conn);
+    }
+
+    public static void addRasporedToList(Raspored raspored) {
+        sviRasporedi.add(raspored);
+    }
+
+    public static void updateRasporedList(Raspored raspored, int id) {
+        for (int i = 0; i < sviRasporedi.size(); i++) {
+            if (sviRasporedi.get(i).getId() == id) {
+                sviRasporedi.set(i, raspored);
+                break;
+            }
+        }
+    }
+
+    public static void removeRasporedFromList(int id) {
+        for (Raspored raspored : sviRasporedi) {
+            if (raspored.getId() == id) {
+                Raspored.sviRasporedi.remove(raspored);
+            }
+        }
+    }
+
 }
