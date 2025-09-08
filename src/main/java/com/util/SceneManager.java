@@ -1,0 +1,65 @@
+package com.util;
+
+import java.io.IOException;
+
+import com.controllers.VlasnikController;
+import com.model.Admin;
+import com.model.Korisnik;
+import com.model.Vlasnik;
+
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
+public class SceneManager {
+
+    private static Stage mainStage;
+    private static Korisnik trenutniKorisnik;
+
+    public static void init(Stage stage) {
+        mainStage = stage;
+        mainStage.setTitle("Sistem Rezervacija");
+        mainStage.setAlwaysOnTop(true);
+    }
+
+    public static Korisnik getKorisnik() {
+        return trenutniKorisnik;
+    }
+
+    public static void setKorisnik(Korisnik korisnik) {
+        trenutniKorisnik = korisnik;
+    }
+
+    public static void showLoginScene() throws IOException {
+        FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource("/views/LoginScene.fxml"));
+        Scene scene = new Scene(loader.load());
+        mainStage.setScene(scene);
+        mainStage.setResizable(false);
+        mainStage.show();
+    }
+
+    public static void showSignUpScene() throws IOException {
+        FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource("/views/SignUpScene.fxml"));
+        Scene scene = new Scene(loader.load());
+        mainStage.setScene(scene);
+        mainStage.setResizable(false);
+        mainStage.show();
+    }
+
+    public static void showVlasnikScene(Vlasnik vlasnik) throws IOException {
+        trenutniKorisnik = vlasnik;
+        FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource("/views/VlasnikScene.fxml"));
+        Scene scene = new Scene(loader.load());
+        mainStage.setScene(scene);
+        mainStage.show();
+    }
+
+    public static void showAdminScene(Admin admin) throws IOException {
+        trenutniKorisnik = admin;
+        FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource("/views/SignUpScene.fxml"));
+        Scene scene = new Scene(loader.load());
+        mainStage.setScene(scene);
+        mainStage.setResizable(false);
+        mainStage.show();
+    }
+}

@@ -1,6 +1,5 @@
 package com.model;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,16 +9,34 @@ public class Vlasnik extends Korisnik {
 
     private int id;
     private String broj_racuna;
-    private String password;
+    private String jmbg;
+    private String broj_telefona;
 
     private static List<Vlasnik> vlasnici = new ArrayList<>();
 
     public Vlasnik(int id, String ime, String prezime,  String jmbg, 
-        String korisnicko_ime, String broj_racuna, String password) {
-        super(ime, prezime, jmbg, korisnicko_ime);
+        String korisnicko_ime, String broj_racuna, String password, String broj_telefona) {
+        super(ime, prezime, korisnicko_ime, password);
         this.id = id;
         this.broj_racuna = broj_racuna;
-        this.password = password;
+        this.jmbg = jmbg;
+        this.broj_telefona = broj_telefona;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getJmbg() {
+        return jmbg;
+    }
+
+    public void setJmbg(String jmbg) {
+        this.jmbg = jmbg;
+    }
+
+    public static void setVlasnici(List<Vlasnik> vlasnici) {
+        Vlasnik.vlasnici = vlasnici;
     }
 
     public Vlasnik() {
@@ -42,17 +59,9 @@ public class Vlasnik extends Korisnik {
         this.broj_racuna = broj_racuna;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public static void createVlasniksList(Connection conn) {
+    public static void createVlasniksList() {
         VlasnikDAO dao = new VlasnikDAO();
-        vlasnici = dao.getAllVlasnik(conn);
+        vlasnici = dao.getAllVlasnik();
     }
 
     public static void addVlasnikToList(Vlasnik vlasnik) {
@@ -83,6 +92,24 @@ public class Vlasnik extends Korisnik {
             }
         }
 
+        return null;
+    }
+
+    public String getBroj_telefona() {
+        return broj_telefona;
+    }
+
+    public void setBroj_telefona(String broj_telefona) {
+        this.broj_telefona = broj_telefona;
+    }
+
+    public static Vlasnik getVlasnik(String user, String pass) {
+        for (Vlasnik vlasnik : vlasnici) {
+            if (vlasnik.getPassword().equals(pass) &&
+                vlasnik.getKorisnicko_ime().equals(user)) {
+                return vlasnik;
+            }
+        }
         return null;
     }
 }

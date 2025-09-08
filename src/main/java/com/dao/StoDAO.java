@@ -7,15 +7,17 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.util.DBConnection;
 import com.model.Sto;
 
 public class StoDAO {
 
-    public List<Sto> getAllStolovi(Connection conn) {
+    public List<Sto> getAllStolovi() {
         List<Sto> stolovi = new ArrayList<>();
         String sql = "SELECT * FROM Meni";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql);
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 int id = rs.getInt("id");
@@ -24,7 +26,7 @@ public class StoDAO {
 
                 stolovi.add(new Sto(
                     id,
-                    ObjekatDAO.getById(objekat_id, conn),
+                    ObjekatDAO.getById(objekat_id),
                     broj_mjesta
                 ));
                 
@@ -36,12 +38,13 @@ public class StoDAO {
         return stolovi;
     }
 
-    public boolean createSto(Sto sto, Connection conn) {
+    public boolean createSto(Sto sto) {
 
         String sql = "INSERT INTO " 
             + "Sto (Objekat_id, broj_mjesta VALUES (?, ?)";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, sto.getObjekat().getId());
             ps.setInt(2, sto.getBroj_mjesta());
 
@@ -53,10 +56,11 @@ public class StoDAO {
         }
     }
 
-    public boolean removeSto(int id, Connection conn) {
+    public boolean removeSto(int id) {
         String sql = "DELETE FROM Sto WHERE id = ?";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
 
             return ps.executeUpdate() == 1;
@@ -67,11 +71,12 @@ public class StoDAO {
         }
     }
 
-    public boolean updateSto(Sto sto, int id, Connection conn) {
+    public boolean updateSto(Sto sto, int id) {
         String sql = "UPDATE Sto SET Objekat_id = ?, broj_mjesta = ?," 
             + " WHERE naziv = ?";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, sto.getObjekat().getId());
             ps.setInt(2, sto.getBroj_mjesta());
             ps.setInt(3, id);
@@ -84,15 +89,16 @@ public class StoDAO {
         }
     }
     
-    public static Sto getById(int id, Connection conn) throws SQLException {
+    public static Sto getById(int id) throws SQLException {
         String sql = "SELECT * FROM Sto WHERE id = ?";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     Sto sto = new Sto();
-                    sto.setObjekat(ObjekatDAO.getById(rs.getInt("Objekat_id"), conn));
+                    sto.setObjekat(ObjekatDAO.getById(rs.getInt("Objekat_id")));
                     sto.setBroj_mjesta(rs.getInt("broj_mjesta"));
                     
                     return sto;

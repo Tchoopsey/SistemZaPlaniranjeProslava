@@ -7,33 +7,37 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.util.DBConnection;
 import com.model.Vlasnik;
 
 public class VlasnikDAO {
 
-    public List<Vlasnik> getAllVlasnik(Connection conn) {
+    public List<Vlasnik> getAllVlasnik() {
         List<Vlasnik> vlasnici = new ArrayList<>();
         String sql = "SELECT * FROM `Vlasnik`";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql);
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 int id = rs.getInt("id");
                 String ime = rs.getString("ime");
                 String prezime = rs.getString("prezime");
                 String jmbg = rs.getString("jmbg");
-                String broj_racuna = rs.getString("broj_racuna");
                 String korisnicko_ime = rs.getString("korisnicko_ime");
+                String broj_racuna = rs.getString("broj_racuna");
                 String password = rs.getString("lozinka");
+                String broj_telefona = rs.getString("broj_telefona");
                 vlasnici.add(
                     new Vlasnik(
                         id,
                         ime,
                         prezime,
-                        korisnicko_ime,
                         jmbg,
+                        korisnicko_ime,
                         broj_racuna,
-                        password
+                        password,
+                        broj_telefona
                     )
                 );
             }
@@ -44,20 +48,24 @@ public class VlasnikDAO {
         return vlasnici;
     }
 
-    public boolean createVlasnik(Vlasnik vlasnik, Connection conn) {
+    public boolean createVlasnik(Vlasnik vlasnik) {
 
         String sql = "INSERT INTO " 
-            + "Vlasnik (ime, prezime, korisnicko_ime, jmbg, lozinka) "
-            + "VALUES (?, ?, ?, ?, ?)";
+            + "Vlasnik (ime, prezime, korisnicko_ime, jmbg, lozinka, broj_telefona, broj_racuna) "
+            + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, vlasnik.getIme());
             ps.setString(2, vlasnik.getPrezime());
             ps.setString(3, vlasnik.getKorisnicko_ime());
             ps.setString(4, vlasnik.getJmbg());
             ps.setString(5, vlasnik.getPassword());
+            ps.setString(6, vlasnik.getBroj_telefona());
+            ps.setString(7, vlasnik.getBroj_racuna());
 
             Vlasnik.addVlasnikToList(vlasnik);
+            System.out.println("Vlasnik created successfully...");
 
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
@@ -67,10 +75,11 @@ public class VlasnikDAO {
         }
     }
 
-    public boolean removeVlasnik(String jmbg, Connection conn) {
+    public boolean removeVlasnik(String jmbg) {
         String sql = "DELETE FROM Vlasnik WHERE jmbg = ?";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, jmbg);
 
             Vlasnik.removeVlasnikFromList(jmbg);
@@ -83,17 +92,19 @@ public class VlasnikDAO {
         }
     }
 
-    public boolean updateVlasnik(Vlasnik vlasnik, String jmbg, Connection conn) {
+    public boolean updateVlasnik(Vlasnik vlasnik, String jmbg) {
         String sql = "UPDATE Vlasnik SET ime = ?, prezime = ?, jmbg = ?"
-            + " korisnicko_ime = ?, lozinka = ? WHERE jmbg = ?";
+            + " korisnicko_ime = ?, lozinka = ?, broj_telefona = ? WHERE jmbg = ?";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, vlasnik.getIme());
             ps.setString(2, vlasnik.getPrezime());
             ps.setString(3, vlasnik.getKorisnicko_ime());
             ps.setString(4, vlasnik.getJmbg());
             ps.setString(5, vlasnik.getPassword());
-            ps.setString(6, jmbg);
+            ps.setString(6, vlasnik.getBroj_telefona());
+            ps.setString(7, jmbg);
 
             Vlasnik.updateVlasniksList(vlasnik, jmbg);
 
@@ -105,10 +116,11 @@ public class VlasnikDAO {
         }
     }
 
-    public static Vlasnik getById(int id, Connection conn) throws SQLException {
+    public static Vlasnik getById(int id) throws SQLException {
         String sql = "SELECT * FROM Vlasnik WHERE id = ?";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -118,7 +130,8 @@ public class VlasnikDAO {
                     vlasnik.setJmbg(rs.getString("jmbg"));
                     vlasnik.setKorisnicko_ime(rs.getString("korisnicko_ime"));
                     vlasnik.setBroj_racuna(rs.getString("broj_racuna"));
-                    vlasnik.setPassword(rs.getString("password"));
+                    vlasnik.setPassword(rs.getString("lozinka"));
+                    vlasnik.setBroj_telefona(rs.getString("broj_telefona"));
 
                     return vlasnik;
                 }

@@ -7,16 +7,17 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.dbutil.DBConnection;
+import com.util.DBConnection;
 import com.model.Meni;
 
 public class MeniDAO {
     
-    public List<Meni> getAllMeni(Connection conn) {
+    public List<Meni> getAllMeni() {
         List<Meni> menii = new ArrayList<>();
         String sql = "SELECT * FROM Meni";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql);
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
 
@@ -26,7 +27,7 @@ public class MeniDAO {
                 double cijena_po_osobi = rs.getDouble("cijena_po_osobi");
                 menii.add(new Meni(
                     id, 
-                    ObjekatDAO.getById(objekat_id, conn), 
+                    ObjekatDAO.getById(objekat_id), 
                     opis, 
                     cijena_po_osobi)
                 );
@@ -60,10 +61,11 @@ public class MeniDAO {
         }
     }
 
-    public boolean removeMeni(int id, Connection conn) {
+    public boolean removeMeni(int id) {
         String sql = "DELETE FROM Meni WHERE id = ?";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
 
             Meni.removeMeniFromList(id);
@@ -76,13 +78,14 @@ public class MeniDAO {
         }
     }
 
-    public boolean updateMeni(Meni meni, Connection conn) {
+    public boolean updateMeni(Meni meni) {
         String sql = "UPDATE Meni SET Objekat_id = ?, opis = ?, cijena_po_osobi = ?"
             + " WHERE id = ?";
 
         int id = meni.getId();
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, meni.getObjekat().getId());
             ps.setDouble(2, meni.getCijena_po_osobi());
             ps.setString(3, meni.getOpis());
@@ -98,15 +101,16 @@ public class MeniDAO {
         }
     }
     
-    public static Meni getById(int id, Connection conn) throws SQLException {
+    public static Meni getById(int id) throws SQLException {
         String sql = "SELECT * FROM Meni WHERE id = ?";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     Meni meni = new Meni();
-                    meni.setObjekat(ObjekatDAO.getById(rs.getInt("Objekat_id"), conn));
+                    meni.setObjekat(ObjekatDAO.getById(rs.getInt("Objekat_id")));
                     meni.setOpis(rs.getString("opis"));
                     meni.setCijena_po_osobi(rs.getDouble("cijena_po_osobi"));
                     return meni;

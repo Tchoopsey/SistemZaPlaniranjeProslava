@@ -1,6 +1,5 @@
 package com.model;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,9 +40,9 @@ public class BankovniRacun {
         this.broj_racuna = broj_racuna;
     }
 
-    public static void createBankovniRacunsList(Connection conn) {
+    public static void createBankovniRacunsList() {
         BankovniRacunDAO dao = new BankovniRacunDAO();
-        racuni = dao.getAllBankovniRacun(conn);
+        racuni = dao.getAllBankovniRacun();
     }
 
     public static void addBankovniRacunToList(BankovniRacun racun) {
@@ -88,4 +87,23 @@ public class BankovniRacun {
     public static List<BankovniRacun> getRacuni() {
         return racuni;
     }
+
+    public static boolean jmbgExists(String jmbg) {
+        for (BankovniRacun bankovniRacun : racuni) {
+            if (bankovniRacun.getJmbg().equals(jmbg)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean broj_racunaExists(String broj) {
+        for (BankovniRacun bankovniRacun : racuni) {
+            if (bankovniRacun.getBroj_racuna().equals(broj)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

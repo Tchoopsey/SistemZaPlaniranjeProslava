@@ -7,15 +7,17 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.util.DBConnection;
 import com.model.Obavjestenje;
 
 public class ObavjestenjeDAO {
 
-    public List<Obavjestenje> getAllObavjestenja(Connection conn) {
+    public List<Obavjestenje> getAllObavjestenja() {
         List<Obavjestenje> obavjestenja = new ArrayList<>();
         String sql = "SELECT * FROM Obavjestenje";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql);
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 int id = rs.getInt("id");
@@ -24,7 +26,7 @@ public class ObavjestenjeDAO {
 
                 obavjestenja.add(new Obavjestenje(
                     id,
-                    ObjekatDAO.getById(objekat_id, conn),
+                    ObjekatDAO.getById(objekat_id),
                     tekst
                 ));
                 
@@ -36,11 +38,12 @@ public class ObavjestenjeDAO {
         return obavjestenja;
     }
 
-    public boolean createObavjestenje(Obavjestenje obavjestenje, Connection conn) {
+    public boolean createObavjestenje(Obavjestenje obavjestenje) {
         String sql = "INSERT INTO " 
             + "Obavjestenje (Objekat_id, tekst VALUES (?, ?)";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, obavjestenje.getObjekat().getId());
             ps.setString(2, obavjestenje.getTekst());
 
@@ -54,10 +57,11 @@ public class ObavjestenjeDAO {
         }
     }
 
-    public boolean removeObavjestenje(int id, Connection conn) {
+    public boolean removeObavjestenje(int id) {
         String sql = "DELETE FROM Obavjestenje WHERE id = ?";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
 
             Obavjestenje.removeObavjestenjeFromList(id);
@@ -70,11 +74,12 @@ public class ObavjestenjeDAO {
         }
     }
 
-    public boolean updateObavjestenje(Obavjestenje obavjestenje, int id, Connection conn) {
+    public boolean updateObavjestenje(Obavjestenje obavjestenje, int id) {
         String sql = "UPDATE Obavjestenje SET Objekat_id = ?, tekst" 
             + " WHERE id = ?";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, obavjestenje.getObjekat().getId());
             ps.setString(2, obavjestenje.getTekst());
             ps.setInt(3, id);
@@ -89,15 +94,16 @@ public class ObavjestenjeDAO {
         }
     }
     
-    public static Obavjestenje getById(int id, Connection conn) throws SQLException {
+    public static Obavjestenje getById(int id) throws SQLException {
         String sql = "SELECT * FROM Obavjestenje WHERE id = ?";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     Obavjestenje obavjestenje = new Obavjestenje();
-                    obavjestenje.setObjekat(ObjekatDAO.getById(rs.getInt("Objekat_id"), conn));
+                    obavjestenje.setObjekat(ObjekatDAO.getById(rs.getInt("Objekat_id")));
                     obavjestenje.setTekst(rs.getString("tekst"));
                     
                     return obavjestenje;

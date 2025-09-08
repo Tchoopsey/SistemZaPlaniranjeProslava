@@ -1,6 +1,5 @@
 package com.model;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,9 +54,9 @@ public class Sto {
         Sto.sviStolovi = sviStolovi;
     }
 
-    public static void createStoList(Connection conn) {
+    public static void createStoList() {
         StoDAO dao = new StoDAO();
-        sviStolovi = dao.getAllStolovi(conn);
+        sviStolovi = dao.getAllStolovi();
     }
 
     public static void addStoToList(Sto raspored) {

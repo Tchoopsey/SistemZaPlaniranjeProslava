@@ -1,4 +1,4 @@
-package com.dbutil;
+package com.util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -18,5 +18,11 @@ public class DBConnection {
         }
         
         return connection;
+    }
+
+    public static void closeConnection() throws SQLException {
+        if (connection != null || !connection.isClosed()) {
+            connection.close();
+        }
     }
 }

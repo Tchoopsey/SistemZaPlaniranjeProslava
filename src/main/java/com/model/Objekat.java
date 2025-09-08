@@ -1,6 +1,5 @@
 package com.model;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -147,9 +146,9 @@ public class Objekat {
     // }
     
 
-    public static void createObjekatList(Connection conn) {
+    public static void createObjekatList() {
         ObjekatDAO dao = new ObjekatDAO();
-        sviObjekti = dao.getAllObjekti(conn);
+        sviObjekti = dao.getAllObjekti();
     }
 
     public static void addObjekatToList(Objekat objekat) {

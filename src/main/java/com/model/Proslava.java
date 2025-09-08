@@ -1,10 +1,7 @@
 package com.model;
 
-import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.dao.ProslavaDAO;
 
@@ -108,9 +105,9 @@ public class Proslava {
         return uplacen_iznos;
     }
 
-    public static void createProslavaList(Connection conn) {
+    public static void createProslavaList() {
         ProslavaDAO dao = new ProslavaDAO();
-        sveProslave = dao.getAllProslave(conn);
+        sveProslave = dao.getAllProslave();
     }
 
     public static void addProslavaToList(Proslava proslava) {

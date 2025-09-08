@@ -1,6 +1,5 @@
 package com.model;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,29 +8,38 @@ import com.dao.AdminDAO;
 public class Admin extends Korisnik {
 
     private int id;
-    private String password;
 
     private static List<Admin> admins = new ArrayList<>();
 
-    public Admin(int id, String ime, String prezime, String jmbg, 
+    public Admin(int id, String ime, String prezime,
         String korisnicko_ime, String password) {
-        super(ime, prezime, jmbg, korisnicko_ime);
+        super(ime, prezime, korisnicko_ime, password);
         this.id = id;
-        this.password = password;
     }
 
 
-    public String getPassword() {
-        return password;
+    public int getId() {
+        return id;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public static void createAdminsList(Connection conn) {
+
+    public static List<Admin> getAdmins() {
+        return admins;
+    }
+
+
+    public static void setAdmins(ArrayList<Admin> admins) {
+        Admin.admins = admins;
+    }
+
+    public static void createAdminsList() {
         AdminDAO dao = new AdminDAO();
-        admins = dao.getAllAdmin(conn);
+        admins = dao.getAllAdmin();
     }
 
     public static void addAdminToList(Admin admin) {
@@ -53,6 +61,16 @@ public class Admin extends Korisnik {
                 Admin.admins.remove(a);
             }
         }
+    }
+
+    public static Admin getAdmin(String user, String pass) {
+        for (Admin admin : admins) {
+            if (admin.getPassword().equals(pass) &&
+                admin.getKorisnicko_ime().equals(user)) {
+                return admin;
+            }
+        }
+        return null;
     }
 
 }

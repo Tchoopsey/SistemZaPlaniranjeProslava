@@ -7,25 +7,26 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.util.DBConnection;
 import com.model.Admin;
 
 public class AdminDAO {
 
-    public List<Admin> getAllAdmin(Connection conn) {
+    public List<Admin> getAllAdmin() {
         List<Admin> admins = new ArrayList<>();
         String sql = "SELECT * FROM `Admin`";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql);
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 int id = rs.getInt("id");
                 String ime = rs.getString("ime");
                 String prezime = rs.getString("prezime");
-                String jmbg = rs.getString("jmbg");
                 String korisnicko_ime = rs.getString("korisnicko_ime");
                 String password = rs.getString("lozinka");
                 admins.add(
-                    new Admin(id, ime, prezime, jmbg, korisnicko_ime, password)
+                    new Admin(id, ime, prezime, korisnicko_ime, password)
                 );
             }
         } catch (SQLException e) {
@@ -35,13 +36,14 @@ public class AdminDAO {
         return admins;
     }
 
-    public boolean createAdmin(Admin admin, Connection conn) {
+    public boolean createAdmin(Admin admin) {
 
         String sql = "INSERT INTO " 
             + "Admin (ime, prezime, korisnicko_ime, lozinka) "
             + "VALUES (?, ?, ?, ?)";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, admin.getIme());
             ps.setString(2, admin.getPrezime());
             ps.setString(3, admin.getKorisnicko_ime());
@@ -57,10 +59,11 @@ public class AdminDAO {
         }
     }
 
-    public boolean removeAdmin(String korisnicko_ime, Connection conn) {
+    public boolean removeAdmin(String korisnicko_ime) {
         String sql = "DELETE FROM Admin WHERE korisnicko_ime = ?";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, korisnicko_ime);
 
             Admin.removeAdminFromList(korisnicko_ime);
@@ -74,11 +77,12 @@ public class AdminDAO {
 
     }
 
-    public boolean updateAdmin(Admin admin, String korisnicko_ime, Connection conn) {
+    public boolean updateAdmin(Admin admin, String korisnicko_ime) {
         String sql = "UPDATE Admin SET ime = ?, prezime = ?,"
             + " korisnicko_ime = ?, lozinka = ? WHERE korisnicko_ime = ?";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, admin.getIme());
             ps.setString(2, admin.getPrezime());
             ps.setString(3, admin.getKorisnicko_ime());

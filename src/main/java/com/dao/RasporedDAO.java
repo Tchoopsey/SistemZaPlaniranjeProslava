@@ -7,15 +7,17 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.util.DBConnection;
 import com.model.Raspored;
 
 public class RasporedDAO {
 
-    public List<Raspored> getAllRasporedi(Connection conn) {
+    public List<Raspored> getAllRasporedi() {
         List<Raspored> rasporedi = new ArrayList<>();
         String sql = "SELECT * FROM Raspored";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql);
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 int id = rs.getInt("id");
@@ -25,8 +27,8 @@ public class RasporedDAO {
 
                 rasporedi.add(new Raspored(
                     id,
-                    StoDAO.getById(sto_id, conn),
-                    ProslavaDAO.getById(proslava_id, conn),
+                    StoDAO.getById(sto_id),
+                    ProslavaDAO.getById(proslava_id),
                     Raspored.gostiFromString(gosti)
                 ));
                 
@@ -38,12 +40,13 @@ public class RasporedDAO {
         return rasporedi;
     }
 
-    public boolean createRaspored(Raspored raspored, Connection conn) {
+    public boolean createRaspored(Raspored raspored) {
 
         String sql = "INSERT INTO " 
             + "Raspored (Sto_id, Proslava_id, gosti  VALUES (?, ?, ?)";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, raspored.getSto().getId());
             ps.setInt(2, raspored.getProslava().getId());
             ps.setString(3, Raspored.gostiFromList(raspored.getGosti()));
@@ -58,10 +61,11 @@ public class RasporedDAO {
         }
     }
 
-    public boolean removeRaspored(int id, Connection conn) {
+    public boolean removeRaspored(int id) {
         String sql = "DELETE FROM Raspored WHERE id = ?";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
 
             Raspored.removeRasporedFromList(id);
@@ -74,11 +78,12 @@ public class RasporedDAO {
         }
     }
 
-    public boolean updateRaspored(Raspored raspored, int id, Connection conn) {
+    public boolean updateRaspored(Raspored raspored, int id) {
         String sql = "UPDATE Raspored SET Sto_id = ?, Proslava_id = ?," 
             + " gosti WHERE naziv = ?";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, raspored.getSto().getId());
             ps.setInt(2, raspored.getProslava().getId());
             ps.setString(3, Raspored.gostiFromList(raspored.getGosti()));
@@ -94,16 +99,17 @@ public class RasporedDAO {
         }
     }
     
-    public static Raspored getById(int id, Connection conn) throws SQLException {
+    public static Raspored getById(int id) throws SQLException {
         String sql = "SELECT * FROM Raspored WHERE id = ?";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     Raspored raspored = new Raspored();
-                    raspored.setSto(StoDAO.getById(rs.getInt("Sto_id"), conn));
-                    raspored.setProslava(ProslavaDAO.getById(rs.getInt("Proslava_id"), conn));
+                    raspored.setSto(StoDAO.getById(rs.getInt("Sto_id")));
+                    raspored.setProslava(ProslavaDAO.getById(rs.getInt("Proslava_id")));
                     raspored.setGosti(Raspored.gostiFromString(rs.getString("gosti")));
                     
                     return raspored;

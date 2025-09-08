@@ -1,6 +1,5 @@
 package com.model;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,9 +64,9 @@ public class Meni {
         Meni.sviMeniji = sviMeniji;
     }
 
-    public static void createMeniList(Connection conn) {
+    public static void createMeniList() {
         MeniDAO dao = new MeniDAO();
-        sviMeniji = dao.getAllMeni(conn);
+        sviMeniji = dao.getAllMeni();
     }
 
     public static void addMeniToList(Meni meni) {

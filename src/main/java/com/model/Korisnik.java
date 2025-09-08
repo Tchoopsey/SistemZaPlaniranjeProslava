@@ -7,16 +7,16 @@ public class Korisnik {
 
     private String ime;
     private String prezime;
-    private String jmbg;
     private String korisnicko_ime;
+    private String password;
 
     private static List<Korisnik> korisnici = new ArrayList<>();
 
-    public Korisnik(String ime, String prezime, String jmbg, String korisnicko_ime) {
+    public Korisnik(String ime, String prezime, String korisnicko_ime, String password) {
         this.ime = ime;
         this.prezime = prezime;
-        this.jmbg = jmbg;
         this.korisnicko_ime = korisnicko_ime;
+        this.password = password;
         korisnici.add(this);
     }
 
@@ -35,10 +35,6 @@ public class Korisnik {
         return prezime;
     }
 
-    public String getJmbg() {
-        return jmbg;
-    }
-
     public void setKorisnicko_ime(String korisnicko_ime) {
         this.korisnicko_ime = korisnicko_ime;
     }
@@ -51,18 +47,46 @@ public class Korisnik {
         this.prezime = prezime;
     }
 
-    public void setJmbg(String jmbg) {
-        this.jmbg = jmbg;
-    }
-
-    public static Korisnik getByJmbg(String jmbg) {
+    public static String checkKorisnicko_ime(String user) {
         for (Korisnik korisnik : korisnici) {
-            if (korisnik.getJmbg().equals(jmbg)) {
-                return korisnik;
+            if (korisnik.getKorisnicko_ime().equals(user)) {
+                if (korisnik instanceof Admin) {
+                    return "Admin";
+                }
+                if (korisnik instanceof Vlasnik) {
+                    return "Vlasnik";
+                }
+                if (korisnik instanceof Klijent) {
+                    return "Klijent";
+                }
             }
         }
-
-        return null;
+        System.out.println("None");
+        return "None";
     }
 
+    public static boolean isPresent(String user) {
+        for (Korisnik korisnik : korisnici) {
+            if (korisnik.getKorisnicko_ime().equals(user)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public static List<Korisnik> getKorisnici() {
+        return korisnici;
+    }
+
+    public static void setKorisnici(List<Korisnik> korisnici) {
+        Korisnik.korisnici = korisnici;
+    }
 }

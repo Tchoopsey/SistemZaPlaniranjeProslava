@@ -7,15 +7,17 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.util.DBConnection;
 import com.model.Proslava;
 
 public class ProslavaDAO {
 
-    public List<Proslava> getAllProslave(Connection conn) {
+    public List<Proslava> getAllProslave() {
         List<Proslava> proslave = new ArrayList<>();
         String sql = "SELECT * FROM Meni";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql);
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 int id = rs.getInt("id");
@@ -29,9 +31,9 @@ public class ProslavaDAO {
 
                 proslave.add(new Proslava(
                     id,
-                    ObjekatDAO.getById(objekat_id, conn),
-                    KlijentDAO.getById(klijent_id, conn),
-                    MeniDAO.getById(meni_id, conn),
+                    ObjekatDAO.getById(objekat_id),
+                    KlijentDAO.getById(klijent_id),
+                    MeniDAO.getById(meni_id),
                     datum,
                     broj_gostiju,
                     ukupna_cijena,
@@ -46,13 +48,14 @@ public class ProslavaDAO {
         return proslave;
     }
 
-    public boolean createProslava(Proslava proslava, Connection conn) {
+    public boolean createProslava(Proslava proslava) {
 
         String sql = "INSERT INTO " 
             + "Proslava (Objekat_id, Klijent_id, Meni_id, datum, broj_gostiju," 
             + " ukupna_cijena, uplacen_iznos VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, proslava.getObjekat().getId());
             ps.setInt(2, proslava.getKlijent().getId());
             ps.setInt(3, proslava.getMeni().getId());
@@ -71,10 +74,11 @@ public class ProslavaDAO {
         }
     }
 
-    public boolean removeProslava(int id, Connection conn) {
+    public boolean removeProslava(int id) {
         String sql = "DELETE FROM Proslava WHERE id = ?";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
 
             Proslava.removeProslavaFromList(id);
@@ -87,12 +91,13 @@ public class ProslavaDAO {
         }
     }
 
-    public boolean updateProslava(Proslava proslava, int id, Connection conn) {
+    public boolean updateProslava(Proslava proslava, int id) {
         String sql = "UPDATE Proslava SET Objekat_id = ?, Klijent_id = ?," 
             + " Meni_id = ?, datum = ?, broj_gostiju = ?, ukupna_cijena = ?,"
             + " uplacen_iznos = ? WHERE naziv = ?";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, proslava.getObjekat().getId());
             ps.setInt(2, proslava.getKlijent().getId());
             ps.setInt(3, proslava.getMeni().getId());
@@ -112,17 +117,18 @@ public class ProslavaDAO {
         }
     }
     
-    public static Proslava getById(int id, Connection conn) throws SQLException {
+    public static Proslava getById(int id) throws SQLException {
         String sql = "SELECT * FROM Proslava WHERE id = ?";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     Proslava proslava = new Proslava();
-                    proslava.setObjekat(ObjekatDAO.getById(rs.getInt("Objekat_id"), conn));
-                    proslava.setKlijent(KlijentDAO.getById(rs.getInt("Klijent_id"), conn));
-                    proslava.setMeni(MeniDAO.getById(rs.getInt("Meni_id"), conn));
+                    proslava.setObjekat(ObjekatDAO.getById(rs.getInt("Objekat_id")));
+                    proslava.setKlijent(KlijentDAO.getById(rs.getInt("Klijent_id")));
+                    proslava.setMeni(MeniDAO.getById(rs.getInt("Meni_id")));
                     proslava.setDatum(rs.getString("datum"));
                     proslava.setBroj_gostiju(rs.getInt("broj_gostiju"));
                     proslava.setUkupna_cijena(rs.getDouble("ukupna_cijena"));

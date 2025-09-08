@@ -1,6 +1,5 @@
 package com.model;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,9 +54,9 @@ public class Obavjestenje {
         Obavjestenje.svaObavjestenja = svaObavjestenja;
     }
 
-    public static void createObavjestenjaList(Connection conn) {
+    public static void createObavjestenjaList() {
         ObavjestenjeDAO dao = new ObavjestenjeDAO();
-        svaObavjestenja = dao.getAllObavjestenja(conn);
+        svaObavjestenja = dao.getAllObavjestenja();
     }
 
     public static void addObavjestenjeToList(Obavjestenje obavjestenje) {
