@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,15 +44,28 @@ public class AdminDAO {
             + "VALUES (?, ?, ?, ?)";
 
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, admin.getIme());
             ps.setString(2, admin.getPrezime());
             ps.setString(3, admin.getKorisnicko_ime());
             ps.setString(4, admin.getPassword());
 
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new SQLException("Creating Admin was unsuccessful!!!");
+            }
+
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    admin.setId(rs.getInt(1));
+                }
+            }
+            Admin.addAdminToList(admin);
+            System.out.println("Creating Admin...");
+
             Admin.addAdminToList(admin);
 
-            return ps.executeUpdate() == 1;
+            return true;
         } catch (SQLException e) {
             System.err.println(e.getMessage());
             System.err.println("Creating Admin user was unsuccessful!!!");

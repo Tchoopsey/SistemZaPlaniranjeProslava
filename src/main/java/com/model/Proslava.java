@@ -131,4 +131,14 @@ public class Proslava {
         }
     }
 
+    public static Proslava getById(int proslava_id) {
+        for (Proslava proslava : sveProslave) {
+            if (proslava.getId() == proslava_id) {
+                return proslava;
+            }
+        }
+
+        return null;
+    }
+
 }

@@ -59,8 +59,8 @@ public class Sto {
         sviStolovi = dao.getAllStolovi();
     }
 
-    public static void addStoToList(Sto raspored) {
-        sviStolovi.add(raspored);
+    public static void addStoToList(Sto sto) {
+        sviStolovi.add(sto);
     }
 
     public static void updateStoList(Sto raspored, int id) {
@@ -78,6 +78,16 @@ public class Sto {
                 Sto.sviStolovi.remove(raspored);
             }
         }
+    }
+
+    public static Sto getById(int sto_id) {
+        for (Sto sto : sviStolovi) {
+            if (sto.getId() == sto_id) {
+                return sto;
+            }
+        }
+
+        return null;
     }
 
 }

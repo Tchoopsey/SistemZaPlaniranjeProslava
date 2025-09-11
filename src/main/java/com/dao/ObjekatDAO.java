@@ -4,18 +4,20 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.util.DBConnection;
 import com.model.Objekat;
 import com.model.StanjeObjekta;
+import com.model.Vlasnik;
 
 public class ObjekatDAO {
 
     public List<Objekat> getAllObjekti() {
         List<Objekat> objekti = new ArrayList<>();
-        String sql = "SELECT * FROM Meni";
+        String sql = "SELECT * FROM Objekat";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -36,7 +38,7 @@ public class ObjekatDAO {
 
                 objekti.add(new Objekat(
                     id, 
-                    VlasnikDAO.getById(vlasnik_id), 
+                    Vlasnik.getById(vlasnik_id), 
                     naziv, 
                     cijena_rezervacije, 
                     grad, 
@@ -60,11 +62,11 @@ public class ObjekatDAO {
 
         String sql = "INSERT INTO " 
             + "Objekat (Vlasnik_id, naziv, cijena_rezervacije, grad, "
-            + "adresa, broj_mjesta, broj_stolova, datumi, zarada, status"
+            + "adresa, broj_mjesta, broj_stolova, datumi, zarada, status) "
             + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, objekat.getVlasnik().getId());
             ps.setString(2, objekat.getNaziv());
             ps.setDouble(3, objekat.getCijena_rezervacije());
@@ -76,9 +78,20 @@ public class ObjekatDAO {
             ps.setDouble(9, objekat.getZarada());
             ps.setString(10, StanjeObjekta.toString(objekat.getStatus()));
 
-            Objekat.createObjekatList();
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new SQLException("Creating Objekat was unsuccessful!!!");
+            }
 
-            return ps.executeUpdate() == 1;
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    objekat.setId(rs.getInt(1));
+                }
+            }
+            Objekat.addObjekatToList(objekat);
+            System.out.println("Creating Objekat...");
+
+            return true;
         } catch (SQLException e) {
             System.err.println(e.getMessage());
             System.err.println("Creating Objekat was unsuccessful!!!");
@@ -94,6 +107,7 @@ public class ObjekatDAO {
             ps.setString(1, naziv);
 
             Objekat.removeObjekatFromList(naziv);
+            System.out.println("Removing Objekat...");
 
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
@@ -159,4 +173,5 @@ public class ObjekatDAO {
 
         return null;
     }
+
 }

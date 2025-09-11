@@ -89,4 +89,14 @@ public class Meni {
             }
         }
     }
+
+    public static Meni getById(int meni_id) {
+        for (Meni meni : sviMeniji) {
+            if (meni.getId() == meni_id) {
+                return meni;
+            }
+        }
+
+        return null;
+    }
 }

@@ -8,13 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.util.DBConnection;
+import com.model.Objekat;
 import com.model.Sto;
 
 public class StoDAO {
 
     public List<Sto> getAllStolovi() {
         List<Sto> stolovi = new ArrayList<>();
-        String sql = "SELECT * FROM Meni";
+        String sql = "SELECT * FROM Sto";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -26,7 +27,7 @@ public class StoDAO {
 
                 stolovi.add(new Sto(
                     id,
-                    ObjekatDAO.getById(objekat_id),
+                    Objekat.getById(objekat_id),
                     broj_mjesta
                 ));
                 
@@ -41,14 +42,27 @@ public class StoDAO {
     public boolean createSto(Sto sto) {
 
         String sql = "INSERT INTO " 
-            + "Sto (Objekat_id, broj_mjesta VALUES (?, ?)";
+            + "Sto (Objekat_id, broj_mjesta) VALUES (?, ?)";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, sto.getObjekat().getId());
             ps.setInt(2, sto.getBroj_mjesta());
 
-            return ps.executeUpdate() == 1;
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new SQLException("Creating Sto was unsuccessful!!!");
+            }
+
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    sto.setId(rs.getInt(1));
+                }
+            }
+            Sto.addStoToList(sto);
+            System.out.println("Creating Sto...");
+
+            return true;
         } catch (SQLException e) {
             System.err.println(e.getMessage());
             System.err.println("Creating Sto was unsuccessful!!!");
@@ -62,6 +76,9 @@ public class StoDAO {
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
+
+            Sto.removeStoFromList(id);
+            System.out.println("Removing Sto...");
 
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {

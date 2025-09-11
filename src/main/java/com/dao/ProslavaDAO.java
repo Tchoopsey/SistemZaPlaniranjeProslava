@@ -8,13 +8,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.util.DBConnection;
+import com.model.Klijent;
+import com.model.Meni;
+import com.model.Objekat;
 import com.model.Proslava;
 
 public class ProslavaDAO {
 
     public List<Proslava> getAllProslave() {
         List<Proslava> proslave = new ArrayList<>();
-        String sql = "SELECT * FROM Meni";
+        String sql = "SELECT * FROM Proslava";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -31,9 +34,9 @@ public class ProslavaDAO {
 
                 proslave.add(new Proslava(
                     id,
-                    ObjekatDAO.getById(objekat_id),
-                    KlijentDAO.getById(klijent_id),
-                    MeniDAO.getById(meni_id),
+                    Objekat.getById(objekat_id),
+                    Klijent.getById(klijent_id),
+                    Meni.getById(meni_id),
                     datum,
                     broj_gostiju,
                     ukupna_cijena,
@@ -64,9 +67,20 @@ public class ProslavaDAO {
             ps.setDouble(6, proslava.getUkupna_cijena());
             ps.setDouble(7, proslava.getUplacen_iznos());
 
-            Proslava.addProslavaToList(proslava);
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new SQLException("Creating Proslava was unsuccessful!!!");
+            }
 
-            return ps.executeUpdate() == 1;
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    proslava.setId(rs.getInt(1));
+                }
+            }
+            Proslava.addProslavaToList(proslava);
+            System.out.println("Creating Proslava...");
+
+            return true;
         } catch (SQLException e) {
             System.err.println(e.getMessage());
             System.err.println("Creating Proslava was unsuccessful!!!");

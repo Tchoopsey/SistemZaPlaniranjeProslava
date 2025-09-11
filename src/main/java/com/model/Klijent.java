@@ -102,4 +102,14 @@ public class Klijent extends Korisnik {
         }
         return null;
     }
+
+    public static Klijent getById(int klijent_id) {
+        for (Klijent klijent : klijenti) {
+            if (klijent.getId() == klijent_id) {
+                return klijent;
+            }
+        }
+
+        return null;
+    }
 }

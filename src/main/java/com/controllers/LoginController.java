@@ -55,13 +55,12 @@ public class LoginController {
             Klijent klijent = Klijent.getKlijent(korisnicko_ime, lozinka);
             if (klijent == null) return;
 
-            // TODO: create Klijent Scene
-            // try {
-            //     System.out.println("Creating Klijent scene...");
-            //     SceneManager.showKlijentScene(klijent);
-            // } catch (IOException e) {
-            //     e.printStackTrace();
-            // }
+            try {
+                System.out.println("Creating Klijent scene...");
+                SceneManager.showKlijentScene(klijent);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
     }

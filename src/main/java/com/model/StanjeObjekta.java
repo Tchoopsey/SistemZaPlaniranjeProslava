@@ -1,11 +1,19 @@
 package com.model;
 
 public enum StanjeObjekta {
-    NA_CEKANJU, ODOBREN, ODBIJEN;
+    NA_CEKANJU("NA CEKANJU"), 
+    ODOBREN("ODOBREN"), 
+    ODBIJEN("ODBIJEN");
+
+    private final String text;
+
+    StanjeObjekta(String text) {
+        this.text = text;
+    }
 
     public static StanjeObjekta fromString(String string) {
         for (StanjeObjekta so : StanjeObjekta.values()) {
-            if (so.name().equalsIgnoreCase(string)) {
+            if (so.text.equalsIgnoreCase(string)) {
                 return so;
             }
         }
@@ -16,7 +24,7 @@ public enum StanjeObjekta {
     public static String toString(StanjeObjekta stanjeObjekta) {
         switch (stanjeObjekta) {
             case NA_CEKANJU:
-                return "NA_CEKANJU";
+                return "NA CEKANJU";
             case ODOBREN:
                 return "ODOBREN";
             case ODBIJEN:

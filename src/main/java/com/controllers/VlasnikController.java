@@ -15,7 +15,6 @@ import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import javafx.util.StringConverter;
 
@@ -38,13 +37,7 @@ public class VlasnikController {
         setUsedDates();
 
         printObjekti();
-
-        lvObjekti.setEditable(false);
-        lblIme.setText(trenutniVlasnik.getIme());
-        lblPrezime.setText(trenutniVlasnik.getPrezime());
-        lblKorisnickoIme.setText(trenutniVlasnik.getKorisnicko_ime());
-        BankovniRacun racun = BankovniRacun.getByBrojRacuna(trenutniVlasnik.getBroj_racuna());
-        lblStanje.setText(""+racun.getStanje());
+        setAllUserData();
     }
 
     @FXML
@@ -55,7 +48,25 @@ public class VlasnikController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
+    @FXML
+    private void handleDodajObjekat() {
+        try {
+            SceneManager.showObjekatScene(trenutniVlasnik);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void setAllUserData() {
+        lvObjekti.setEditable(false);
+        lblIme.setText(trenutniVlasnik.getIme());
+        lblPrezime.setText(trenutniVlasnik.getPrezime());
+        lblKorisnickoIme.setText(trenutniVlasnik.getKorisnicko_ime());
+        BankovniRacun racun = BankovniRacun.getByBrojRacuna(trenutniVlasnik.getBroj_racuna());
+        lblStanje.setText(""+racun.getStanje());
     }
 
     @FXML
@@ -111,13 +122,12 @@ public class VlasnikController {
         });
     }
 
-    @FXML
     private void printObjekti() {
-        // for (Objekat objekat : Objekat.getSviObjekti()) {
-        //     taObjekti.appendText(objekat.getNaziv());
-        // }
-        for (int i = 0; i < 6; i++) {
-            lvObjekti.getItems().add("Moja mala gace nije prala");
+        for (Objekat objekat : Objekat.getSviObjekti()) {
+            if (trenutniVlasnik.getId() == objekat.getVlasnik().getId()) {
+                lvObjekti.getItems().add(objekat.getNaziv() + ", " + 
+                    objekat.getGrad() + ", " + objekat.getAdresa());
+            }
         }
     }
 }

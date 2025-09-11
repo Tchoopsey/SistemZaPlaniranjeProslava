@@ -28,11 +28,11 @@ public class Main extends Application {
         System.out.println("Loading Admin...");
         Admin.createAdminsList();
 
-        System.out.println("Loading Klijent...");
-        Klijent.createKlijentsList();
-
         System.out.println("Loading Vlasnik...");
         Vlasnik.createVlasniksList();
+
+        System.out.println("Loading Klijent...");
+        Klijent.createKlijentsList();
 
         System.out.println("Loading BankovniRacun...");
         BankovniRacun.createBankovniRacunsList();
@@ -40,17 +40,17 @@ public class Main extends Application {
         System.out.println("Loading Objekat...");
         Objekat.createObjekatList();
 
-        System.out.println("Loading Proslava...");
-        Proslava.createProslavaList();
+        System.out.println("Loading Meni...");
+        Meni.createMeniList();
 
         System.out.println("Loading Sto...");
         Sto.createStoList();
 
+        System.out.println("Loading Proslava...");
+        Proslava.createProslavaList();
+
         System.out.println("Loading Raspored...");
         Raspored.createRasporedList();
-
-        System.out.println("Loading Meni...");
-        Meni.createMeniList();
 
         System.out.println("Loading Obavjestenje...");
         Obavjestenje.createObavjestenjaList();

@@ -2,8 +2,8 @@ package com.util;
 
 import java.io.IOException;
 
-import com.controllers.VlasnikController;
 import com.model.Admin;
+import com.model.Klijent;
 import com.model.Korisnik;
 import com.model.Vlasnik;
 
@@ -54,9 +54,26 @@ public class SceneManager {
         mainStage.show();
     }
 
+    public static void showObjekatScene(Vlasnik vlasnik) throws IOException {
+        trenutniKorisnik = vlasnik;
+        FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource("/views/ObjekatScene.fxml"));
+        Scene scene = new Scene(loader.load());
+        mainStage.setScene(scene);
+        mainStage.show();
+    }
+
     public static void showAdminScene(Admin admin) throws IOException {
         trenutniKorisnik = admin;
-        FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource("/views/SignUpScene.fxml"));
+        FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource("/views/AdminScene.fxml"));
+        Scene scene = new Scene(loader.load());
+        mainStage.setScene(scene);
+        mainStage.setResizable(false);
+        mainStage.show();
+    }
+
+    public static void showKlijentScene(Klijent klijent) throws IOException {
+        trenutniKorisnik = klijent;
+        FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource("/views/KlijentScene.fxml"));
         Scene scene = new Scene(loader.load());
         mainStage.setScene(scene);
         mainStage.setResizable(false);

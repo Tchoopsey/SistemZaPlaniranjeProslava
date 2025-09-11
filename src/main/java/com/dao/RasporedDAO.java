@@ -8,7 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.util.DBConnection;
+import com.model.Proslava;
 import com.model.Raspored;
+import com.model.Sto;
 
 public class RasporedDAO {
 
@@ -27,8 +29,8 @@ public class RasporedDAO {
 
                 rasporedi.add(new Raspored(
                     id,
-                    StoDAO.getById(sto_id),
-                    ProslavaDAO.getById(proslava_id),
+                    Sto.getById(sto_id),
+                    Proslava.getById(proslava_id),
                     Raspored.gostiFromString(gosti)
                 ));
                 
@@ -51,9 +53,20 @@ public class RasporedDAO {
             ps.setInt(2, raspored.getProslava().getId());
             ps.setString(3, Raspored.gostiFromList(raspored.getGosti()));
 
-            Raspored.addRasporedToList(raspored);
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new SQLException("Creating Raspored was unsuccessful!!!");
+            }
 
-            return ps.executeUpdate() == 1;
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    raspored.setId(rs.getInt(1));
+                }
+            }
+            Raspored.addRasporedToList(raspored);
+            System.out.println("Creating Raspored...");
+
+            return true;
         } catch (SQLException e) {
             System.err.println(e.getMessage());
             System.err.println("Creating Raspored was unsuccessful!!!");

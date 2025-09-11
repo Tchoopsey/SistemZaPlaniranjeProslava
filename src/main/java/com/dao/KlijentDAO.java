@@ -33,8 +33,8 @@ public class KlijentDAO {
                         id,
                         ime,
                         prezime,
-                        korisnicko_ime,
                         jmbg,
+                        korisnicko_ime,
                         broj_racuna,
                         password,
                         broj_telefona
@@ -53,8 +53,8 @@ public class KlijentDAO {
     public boolean createKlijent(Klijent klijent) {
 
         String sql = "INSERT INTO " 
-            + "Klijent (ime, prezime, jmbg, broj_racuna, korisnicko_ime, lozinka) "
-            + "VALUES (?, ?, ?, ?, ?, ?)";
+            + "Klijent (ime, prezime, jmbg, broj_racuna, korisnicko_ime, lozinka, broj_telefona) "
+            + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -64,11 +64,22 @@ public class KlijentDAO {
             ps.setString(4, klijent.getBroj_racuna());
             ps.setString(5, klijent.getKorisnicko_ime());
             ps.setString(6, klijent.getPassword());
-            ps.setString(6, klijent.getBroj_telefona());
+            ps.setString(7, klijent.getBroj_telefona());
 
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new SQLException("Creating Klijent was unsuccessful!!!");
+            }
+
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    klijent.setId(rs.getInt(1));
+                }
+            }
             Klijent.addKlijentToList(klijent);
+            System.out.println("Creating Klijent...");
 
-            return ps.executeUpdate() == 1;
+            return true;
         } catch (SQLException e) {
             System.err.println(e.getMessage());
             System.err.println("Creating Klijent user was unsuccessful!!!");

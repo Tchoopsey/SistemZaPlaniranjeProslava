@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.util.DBConnection;
 import com.model.Meni;
+import com.model.Objekat;
 
 public class MeniDAO {
     
@@ -27,7 +28,7 @@ public class MeniDAO {
                 double cijena_po_osobi = rs.getDouble("cijena_po_osobi");
                 menii.add(new Meni(
                     id, 
-                    ObjekatDAO.getById(objekat_id), 
+                    Objekat.getById(objekat_id), 
                     opis, 
                     cijena_po_osobi)
                 );
@@ -48,12 +49,23 @@ public class MeniDAO {
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, meni.getObjekat().getId());
-            ps.setDouble(2, meni.getCijena_po_osobi());
-            ps.setString(3, meni.getOpis());
+            ps.setString(2, meni.getOpis());
+            ps.setDouble(3, meni.getCijena_po_osobi());
 
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new SQLException("Creating Meni was unsuccessful!!!");
+            }
+
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    meni.setId(rs.getInt(1));
+                }
+            }
             Meni.addMeniToList(meni);
+            System.out.println("Creating Meni...");
 
-            return ps.executeUpdate() == 1;
+            return true;
         } catch (SQLException e) {
             System.err.println(e.getMessage());
             System.err.println("Creating Meni was unsuccessful!!!");
@@ -69,6 +81,7 @@ public class MeniDAO {
             ps.setInt(1, id);
 
             Meni.removeMeniFromList(id);
+            System.out.println("Removing Meni...");
 
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
@@ -87,8 +100,8 @@ public class MeniDAO {
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, meni.getObjekat().getId());
-            ps.setDouble(2, meni.getCijena_po_osobi());
-            ps.setString(3, meni.getOpis());
+            ps.setString(2, meni.getOpis());
+            ps.setDouble(3, meni.getCijena_po_osobi());
             ps.setInt(4, id);
 
             Meni.updateMeniList(meni, id);

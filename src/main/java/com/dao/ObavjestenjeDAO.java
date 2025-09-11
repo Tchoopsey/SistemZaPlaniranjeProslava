@@ -47,9 +47,20 @@ public class ObavjestenjeDAO {
             ps.setInt(1, obavjestenje.getObjekat().getId());
             ps.setString(2, obavjestenje.getTekst());
 
-            Obavjestenje.addObavjestenjeToList(obavjestenje);
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new SQLException("Creating Obavjestenje was unsuccessful!!!");
+            }
 
-            return ps.executeUpdate() == 1;
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    obavjestenje.setId(rs.getInt(1));
+                }
+            }
+            Obavjestenje.addObavjestenjeToList(obavjestenje);
+            System.out.println("Creating Obavjestenje...");
+
+            return true;
         } catch (SQLException e) {
             System.err.println(e.getMessage());
             System.err.println("Creating Obavjestenje was unsuccessful!!!");

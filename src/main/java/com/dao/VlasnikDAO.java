@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,7 +56,7 @@ public class VlasnikDAO {
             + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, vlasnik.getIme());
             ps.setString(2, vlasnik.getPrezime());
             ps.setString(3, vlasnik.getKorisnicko_ime());
@@ -64,10 +65,20 @@ public class VlasnikDAO {
             ps.setString(6, vlasnik.getBroj_telefona());
             ps.setString(7, vlasnik.getBroj_racuna());
 
-            Vlasnik.addVlasnikToList(vlasnik);
-            System.out.println("Vlasnik created successfully...");
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new SQLException("Creating Vlasnik was unsuccessful!!!");
+            }
 
-            return ps.executeUpdate() == 1;
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    vlasnik.setId(rs.getInt(1));
+                }
+            }
+            Vlasnik.addVlasnikToList(vlasnik);
+            System.out.println("Creating Vlasnik...");
+
+            return true;
         } catch (SQLException e) {
             System.err.println(e.getMessage());
             System.err.println("Creating Vlasnik user was unsuccessful!!!");

@@ -135,15 +135,15 @@ public class Objekat {
         Objekat.sviObjekti = sviObjekti;
     }
 
-    // public static Objekat getObjekatById(int objekat_id) {
-    //     for (Objekat objekat : sviObjekti) {
-    //         if (objekat.getId() == objekat_id) {
-    //             return objekat;
-    //         }
-    //     }
-    //
-    //     return null;
-    // }
+    public static Objekat getById(int objekat_id) {
+        for (Objekat objekat : sviObjekti) {
+            if (objekat.getId() == objekat_id) {
+                return objekat;
+            }
+        }
+
+        return null;
+    }
     
 
     public static void createObjekatList() {
