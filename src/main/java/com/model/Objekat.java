@@ -172,4 +172,8 @@ public class Objekat {
         }
     }
 
+    @Override
+    public String toString() {
+        return this.getNaziv() + ", " + this.getGrad() + ", " + this.getAdresa();
+    }
 }

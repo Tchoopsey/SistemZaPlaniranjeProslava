@@ -53,8 +53,8 @@
          </children>
       </GridPane>
       <Button fx:id="btnDodajRezervaciju" layoutX="14.0" layoutY="523.0" mnemonicParsing="false" onAction="#handleDodajRezervaciju" text="Dodaj rezervaciju" />
-      <ListView fx:id="lvObjekti1" layoutX="445.0" layoutY="272.0" prefHeight="239.0" prefWidth="314.0" />
-      <Button fx:id="btnDodajRezervaciju1" layoutX="624.0" layoutY="523.0" mnemonicParsing="false" onAction="#handleDodajRezervaciju" text="Izmjeni rezervaciju" />
+      <ListView fx:id="lvProslave" layoutX="445.0" layoutY="272.0" prefHeight="239.0" prefWidth="314.0" />
+      <Button fx:id="btnIzmjeniRezervaciju" layoutX="624.0" layoutY="523.0" mnemonicParsing="false" onAction="#handleIzmjeniRezervaciju" text="Izmjeni rezervaciju" />
       <GridPane layoutX="445.0" layoutY="232.0" prefHeight="30.0" prefWidth="314.0">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
