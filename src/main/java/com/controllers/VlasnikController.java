@@ -32,7 +32,6 @@ public class VlasnikController {
     private void initialize() {
         trenutniVlasnik = (Vlasnik) SceneManager.getKorisnik();
 
-        // TODO: za svaki objekat posebno uzeti u obzir!!!
         setFormat();
         setUsedDates();
 
@@ -69,7 +68,6 @@ public class VlasnikController {
         lblStanje.setText(""+racun.getStanje());
     }
 
-    @FXML
     private void setFormat() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
@@ -92,7 +90,6 @@ public class VlasnikController {
         dpDatum.setPromptText("dd.MM.yyyy");
     }
 
-    @FXML
     private void setUsedDates() {
         List<LocalDate> takenDates = List.of(
             LocalDate.of(2025, 9, 12), 
@@ -113,7 +110,7 @@ public class VlasnikController {
                 if (takenDates.contains(datum)) {
                     Tooltip tooltip = new Tooltip("Datum je zauzet!");
                     setTooltip(tooltip);
-                    setStyle("-fx-background-color: #ff6b6b; -fx-text-fill: white;");
+                    setStyle("-fx-background-color: red; -fx-text-fill: white;");
                 } else {
                     setStyle("");
                     setTooltip(null);

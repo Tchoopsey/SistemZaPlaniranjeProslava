@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
@@ -46,12 +46,12 @@
             <Label text="Broj gostiju:" />
             <TextField fx:id="tfBrojGostiju" GridPane.columnIndex="1" />
             <Label text="Sto:" GridPane.rowIndex="1" />
-            <ChoiceBox fx:id="cbSto" prefHeight="26.0" prefWidth="159.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <Label text="Gosti:" GridPane.rowIndex="2" />
+            <ComboBox fx:id="cbSto" prefHeight="26.0" prefWidth="171.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
          </children>
       </GridPane>
-      <TextArea layoutX="13.0" layoutY="368.0" prefHeight="200.0" prefWidth="747.0" />
-      <Button fx:id="btnDodaj" layoutX="640.0" layoutY="575.0" mnemonicParsing="false" onAction="#handleDodaj" text="Dodaj rezervaciju" />
+      <TextArea fx:id="taGosti" layoutX="13.0" layoutY="368.0" prefHeight="200.0" prefWidth="747.0" />
+      <Button fx:id="btnDodajRezervaciju" layoutX="635.0" layoutY="575.0" mnemonicParsing="false" onAction="#handleDodajRezervaciju" text="Dodaj rezervaciju" />
       <GridPane layoutX="429.0" layoutY="264.0" prefHeight="64.0" prefWidth="330.0">
          <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -63,9 +63,9 @@
          </rowConstraints>
          <children>
             <Label text="Meni:" />
-            <ChoiceBox fx:id="cbMeni" prefHeight="26.0" prefWidth="157.0" GridPane.columnIndex="1" />
             <Label text="Datum:" GridPane.rowIndex="1" />
-            <DatePicker fx:id="dpDatum" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <DatePicker fx:id="dpDatum" prefHeight="26.0" prefWidth="168.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <ComboBox fx:id="cbMeni" prefHeight="26.0" prefWidth="171.0" GridPane.columnIndex="1" />
          </children>
       </GridPane>
       <GridPane layoutX="14.0" layoutY="129.0" prefHeight="90.0" prefWidth="221.0">
@@ -106,5 +106,6 @@
             <Label fx:id="lblBrojStolova" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
          </children>
       </GridPane>
+      <Button fx:id="btnDodajRaspored" layoutX="13.0" layoutY="575.0" mnemonicParsing="false" onAction="#handleDodajRaspored" text="Dodaj raspored" />
    </children>
 </Pane>
