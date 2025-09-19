@@ -35,6 +35,7 @@ public class NovaRezervacijaController {
     static Objekat trenutniObjekat;
     @FXML Label lblNaziv;
     @FXML Label lblGrad;
+    @FXML Label lblAdresa;
     @FXML Label lblCijenaRezervacije;
     @FXML Label lblBrojMjesta;
     @FXML Label lblBrojStolova;
@@ -67,12 +68,20 @@ public class NovaRezervacijaController {
 
     @FXML
     private void handleDodajRezervaciju() {
-        
+        // TODO
+        // prikupiti sve informacije za kreiranje rezervacije
+        // privremene objekte pohraniti u bazu
+        // oduzeti novac sa racuna
     }
 
     @FXML
     private void handleDodajRaspored() {
         List<String> gosti = new ArrayList<>();
+        // TODO
+        // Izvuci goste iz taGosti
+        // Strpati ih u listu gostiju
+        // prebrojati da li na izabranom stolu ima dovoljno mjesta
+        // ako ima, dodati goste privremeno u raspored
     }
 
     @FXML
@@ -137,12 +146,12 @@ public class NovaRezervacijaController {
         lblKorisnickoIme.setText(trenutniKlijent.getKorisnicko_ime());
         BankovniRacun racun = BankovniRacun.getByBrojRacuna(trenutniKlijent.getBroj_racuna());
         lblStanje.setText(""+racun.getStanje());
-        lblNaziv.setUserData(trenutniObjekat.getNaziv());
-        lblGrad.setUserData(trenutniObjekat.getGrad());
-        lblCijenaRezervacije.setUserData(trenutniObjekat.getCijena_rezervacije());
-        lblBrojMjesta.setUserData(trenutniObjekat.getBroj_mjesta());
-        lblBrojStolova.setUserData(trenutniObjekat.getBroj_stolova());
-        tfBrojGostiju.setUserData("");
+        lblNaziv.setText(trenutniObjekat.getNaziv());
+        lblGrad.setText(trenutniObjekat.getGrad());
+        lblAdresa.setText(trenutniObjekat.getAdresa());
+        lblCijenaRezervacije.setText(Double.toString(trenutniObjekat.getCijena_rezervacije()));
+        lblBrojMjesta.setText(Integer.toString(trenutniObjekat.getBroj_mjesta()));
+        lblBrojStolova.setText(Integer.toString(trenutniObjekat.getBroj_stolova()));
         tfBrojGostiju.setUserData("");
         setStolovi();
         setMeniji();
@@ -185,7 +194,7 @@ class StoWrapper {
 
     @Override
     public String toString() {
-        return "Sto " + id;
+        return "Sto " + id + ": " + sto.getBroj_mjesta() + " mjesta";
     }
 
     public int getId() {
