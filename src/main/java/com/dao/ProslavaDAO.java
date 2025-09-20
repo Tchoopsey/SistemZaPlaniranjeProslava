@@ -1,9 +1,12 @@
 package com.dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +30,7 @@ public class ProslavaDAO {
                 int objekat_id = rs.getInt("Objekat_id");
                 int klijent_id = rs.getInt("Klijent_id");
                 int meni_id = rs.getInt("Meni_id");
-                String datum = rs.getString("datum");
+                LocalDate datum = rs.getDate("datum").toLocalDate();
                 int broj_gostiju = rs.getInt("broj_gostiju");
                 double ukupna_cijena = rs.getDouble("ukupna_cijena");
                 double uplacen_iznos = rs.getDouble("uplacen_iznos");
@@ -62,7 +65,7 @@ public class ProslavaDAO {
             ps.setInt(1, proslava.getObjekat().getId());
             ps.setInt(2, proslava.getKlijent().getId());
             ps.setInt(3, proslava.getMeni().getId());
-            ps.setString(4, proslava.getDatum());
+            ps.setDate(4, Date.valueOf(proslava.getDatum()));
             ps.setInt(5, proslava.getBroj_gostiju());
             ps.setDouble(6, proslava.getUkupna_cijena());
             ps.setDouble(7, proslava.getUplacen_iznos());
@@ -115,7 +118,7 @@ public class ProslavaDAO {
             ps.setInt(1, proslava.getObjekat().getId());
             ps.setInt(2, proslava.getKlijent().getId());
             ps.setInt(3, proslava.getMeni().getId());
-            ps.setString(4, proslava.getDatum());
+            ps.setDate(4, Date.valueOf(proslava.getDatum()));
             ps.setInt(5, proslava.getBroj_gostiju());
             ps.setDouble(6, proslava.getUkupna_cijena());
             ps.setDouble(7, proslava.getUplacen_iznos());

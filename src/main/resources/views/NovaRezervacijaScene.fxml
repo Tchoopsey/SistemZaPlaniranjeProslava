@@ -47,7 +47,7 @@
             <TextField fx:id="tfBrojGostiju" GridPane.columnIndex="1" />
             <Label text="Sto:" GridPane.rowIndex="1" />
             <Label text="Gosti:" GridPane.rowIndex="2" />
-            <ComboBox fx:id="cbSto" prefHeight="26.0" prefWidth="171.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <ComboBox fx:id="cbSto" onAction="#handleSelectedSto" prefHeight="26.0" prefWidth="171.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
          </children>
       </GridPane>
       <TextArea fx:id="taGosti" layoutX="13.0" layoutY="368.0" prefHeight="200.0" prefWidth="747.0" />

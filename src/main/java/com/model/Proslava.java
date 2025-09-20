@@ -1,5 +1,6 @@
 package com.model;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +12,7 @@ public class Proslava {
     private Objekat objekat;
     private Klijent klijent;
     private Meni meni;
-    private String datum;
+    private LocalDate datum;
     private int broj_gostiju;
     private double ukupna_cijena;
     private double uplacen_iznos;
@@ -19,7 +20,7 @@ public class Proslava {
     private static List<Proslava> sveProslave = new ArrayList<>();
 
     public Proslava(int id, Objekat objekat, Klijent klijent, Meni meni, 
-        String datum, int broj_gostiju, double ukupna_cijena, double uplacen_iznos) {
+        LocalDate datum, int broj_gostiju, double ukupna_cijena, double uplacen_iznos) {
         this.id = id;
         this.objekat = objekat;
         this.klijent = klijent;
@@ -85,7 +86,7 @@ public class Proslava {
         return meni;
     }
 
-    public String getDatum() {
+    public LocalDate getDatum() {
         return datum;
     }
 
