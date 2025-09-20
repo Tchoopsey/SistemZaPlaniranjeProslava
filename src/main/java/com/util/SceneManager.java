@@ -82,6 +82,16 @@ public class SceneManager {
         mainStage.show();
     }
 
+    public static void showCreateAdminScene(Admin admin) throws IOException {
+        trenutniKorisnik = admin;
+        FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource("/views/CreateAdminScene.fxml"));
+        Scene scene = new Scene(loader.load());
+        mainStage.setScene(scene);
+        mainStage.setResizable(false);
+        mainStage.show();
+
+    }
+
     public static void showKlijentScene(Klijent klijent) throws IOException {
         trenutniKorisnik = klijent;
         FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource("/views/KlijentScene.fxml"));

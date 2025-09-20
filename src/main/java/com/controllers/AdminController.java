@@ -2,26 +2,26 @@ package com.controllers;
 
 import java.io.IOException;
 
-import com.model.BankovniRacun;
-import com.model.Klijent;
+import com.model.Admin;
+import com.model.Objekat;
 import com.util.SceneManager;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
 
 public class AdminController {
 
-    static Klijent trenutniKlijent;
+    static Admin trenutniAdmin;
     @FXML Label lblIme;
     @FXML Label lblPrezime;
     @FXML Label lblKorisnickoIme;
-    @FXML Label lblStanje;
-    @FXML ListView<String> lvObjekti;
-    @FXML TextField tfBrojMjesta;
-    @FXML TextField tfDatum;
-    @FXML TextField tfGrad;
+    @FXML ListView<Objekat> lvObjekti;
+    @FXML Button btnNoviAdmin;
+    @FXML Button btnOdobri;
+    @FXML Button btnOdbij;
+
 
     @FXML
     private void initialize() {
@@ -29,25 +29,40 @@ public class AdminController {
     }
 
     @FXML
-    private void setAllUserData() {
-        tfBrojMjesta.setUserData("");
-        tfDatum.setUserData("");
-        tfGrad.setUserData("");
-        lvObjekti.setEditable(false);
-        lblIme.setText(trenutniKlijent.getIme());
-        lblPrezime.setText(trenutniKlijent.getPrezime());
-        lblKorisnickoIme.setText(trenutniKlijent.getKorisnicko_ime());
-        BankovniRacun racun = BankovniRacun.getByBrojRacuna(trenutniKlijent.getBroj_racuna());
-        lblStanje.setText(""+racun.getStanje());
-    }
-
-    @FXML
     private void handleLogout() {
         try {
-            trenutniKlijent = null;
+            trenutniAdmin = null;
             SceneManager.showLoginScene();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    @FXML
+    private void handleNoviAdmin() {
+        try {
+            SceneManager.showCreateAdminScene(trenutniAdmin);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+    }
+
+    @FXML
+    private void handleOdobri() {
+        
+    }
+
+    @FXML
+    private void handleOdbij() {
+        
+    }
+
+    private void setAllUserData() {
+        trenutniAdmin = (Admin) SceneManager.getKorisnik();
+        lblIme.setText(trenutniAdmin.getIme());
+        lblPrezime.setText(trenutniAdmin.getPrezime());
+        lblKorisnickoIme.setText(trenutniAdmin.getKorisnicko_ime());
+    }
+
 }
