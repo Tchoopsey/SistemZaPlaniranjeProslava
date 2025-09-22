@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +49,7 @@ public class RasporedDAO {
             + "Raspored (Sto_id, Proslava_id, gosti  VALUES (?, ?, ?)";
 
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, raspored.getSto().getId());
             ps.setInt(2, raspored.getProslava().getId());
             ps.setString(3, Raspored.gostiFromList(raspored.getGosti()));

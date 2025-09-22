@@ -58,7 +58,7 @@ public class Proslava {
         this.meni = meni;
     }
 
-    public void setDatum(String datum) {
+    public void setDatum(LocalDate datum) {
         this.datum = datum;
     }
 

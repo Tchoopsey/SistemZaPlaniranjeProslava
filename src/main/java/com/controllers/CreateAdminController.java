@@ -109,6 +109,7 @@ public class CreateAdminController {
     }
 
     private void setAllUserData() {
+        trenutniAdmin = (Admin) SceneManager.getKorisnik();
         tfIme.setUserData("");
         tfPrezime.setUserData("");
         tfKorisnickoIme.setUserData("");

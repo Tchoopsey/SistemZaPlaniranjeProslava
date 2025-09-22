@@ -4,11 +4,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.util.DBConnection;
 import com.model.Obavjestenje;
+import com.model.Objekat;
 
 public class ObavjestenjeDAO {
 
@@ -26,7 +28,7 @@ public class ObavjestenjeDAO {
 
                 obavjestenja.add(new Obavjestenje(
                     id,
-                    ObjekatDAO.getById(objekat_id),
+                    Objekat.getById(objekat_id),
                     tekst
                 ));
                 
@@ -40,10 +42,10 @@ public class ObavjestenjeDAO {
 
     public boolean createObavjestenje(Obavjestenje obavjestenje) {
         String sql = "INSERT INTO " 
-            + "Obavjestenje (Objekat_id, tekst VALUES (?, ?)";
+            + "Obavjestenje (Objekat_id, tekst) VALUES (?, ?)";
 
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, obavjestenje.getObjekat().getId());
             ps.setString(2, obavjestenje.getTekst());
 
