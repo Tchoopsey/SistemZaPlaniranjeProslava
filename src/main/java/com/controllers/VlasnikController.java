@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.model.BankovniRacun;
 import com.model.Objekat;
+import com.model.StanjeObjekta;
 import com.model.Vlasnik;
 import com.util.SceneManager;
 
@@ -33,7 +34,7 @@ public class VlasnikController {
         trenutniVlasnik = (Vlasnik) SceneManager.getKorisnik();
 
         setFormat();
-        setUsedDates();
+        setZauzetiDatumi();
 
         printObjekti();
         setAllUserData();
@@ -90,8 +91,8 @@ public class VlasnikController {
         dpDatum.setPromptText("dd.MM.yyyy");
     }
 
-    private void setUsedDates() {
-        List<LocalDate> takenDates = List.of(
+    private void setZauzetiDatumi() {
+        List<LocalDate> zauzetiDatumi = List.of(
             LocalDate.of(2025, 9, 12), 
             LocalDate.of(2025, 9, 15), 
             LocalDate.of(2025, 9, 20)
@@ -107,11 +108,18 @@ public class VlasnikController {
                     return;
                 }
 
-                if (takenDates.contains(datum)) {
-                    Tooltip tooltip = new Tooltip("Datum je zauzet!");
-                    setTooltip(tooltip);
+                if (datum.isBefore(LocalDate.now())) {
+                    setDisable(true);
+                    setStyle("-fx-background-color: lightgray;");
+                    if (zauzetiDatumi.contains(datum)) {
+                        setStyle("-fx-background-color: darkgray; -fx-text-fill: white;");
+                    }
+                } else if (zauzetiDatumi.contains(datum)) {
+                    setDisable(true);
                     setStyle("-fx-background-color: red; -fx-text-fill: white;");
+                    setTooltip(new Tooltip("Datum je zauzet!"));
                 } else {
+                    setDisable(false);
                     setStyle("");
                     setTooltip(null);
                 }
@@ -121,7 +129,8 @@ public class VlasnikController {
 
     private void printObjekti() {
         for (Objekat objekat : Objekat.getSviObjekti()) {
-            if (trenutniVlasnik.getId() == objekat.getVlasnik().getId()) {
+            if (trenutniVlasnik.getId() == objekat.getVlasnik().getId()
+                && objekat.getStatus() == StanjeObjekta.ODOBREN) {
                 lvObjekti.getItems().add(objekat.getNaziv() + ", " + 
                     objekat.getGrad() + ", " + objekat.getAdresa());
             }

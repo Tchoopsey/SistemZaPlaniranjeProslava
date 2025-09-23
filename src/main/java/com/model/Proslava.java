@@ -142,4 +142,9 @@ public class Proslava {
         return null;
     }
 
+    @Override
+    public String toString() {
+        return this.datum.toString();
+    }
+
 }

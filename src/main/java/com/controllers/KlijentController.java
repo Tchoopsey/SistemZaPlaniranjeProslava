@@ -23,14 +23,14 @@ import javafx.scene.control.TextField;
 public class KlijentController {
 
     static Klijent trenutniKlijent;
-    static List<Objekat> objekti = new ArrayList<>();
+    static List<Objekat> objekti;
     ObservableList<Objekat> obsObjekti;
     @FXML Label lblIme;
     @FXML Label lblPrezime;
     @FXML Label lblKorisnickoIme;
     @FXML Label lblStanje;
     @FXML ListView<Objekat> lvObjekti;
-    @FXML ListView<Proslava> lvRezervacija;
+    @FXML ListView<Proslava> lvProslave;
     @FXML TextField tfBrojMjesta;
     @FXML TextField tfDatum;
     @FXML TextField tfGrad;
@@ -39,7 +39,6 @@ public class KlijentController {
     private void initialize() {
         setAllUserData();
         filterObjekti(obsObjekti, lvObjekti);
-
         getRezervacije();
     }
 
@@ -55,9 +54,9 @@ public class KlijentController {
 
     @FXML
     public void handleIzmjeniRezervaciju() {
-        Objekat objekat = lvObjekti.getSelectionModel().getSelectedItem();
+        Proslava proslava = lvProslave.getSelectionModel().getSelectedItem();
         try {
-            SceneManager.showNovaRezervacijaScene(trenutniKlijent, objekat);
+            SceneManager.showIzmjeniRezervacijuScene(trenutniKlijent, proslava);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -80,14 +79,16 @@ public class KlijentController {
         tfDatum.setUserData("");
         tfGrad.setUserData("");
         lvObjekti.setEditable(false);
+        lvProslave.setEditable(false);
         lblIme.setText(trenutniKlijent.getIme());
         lblPrezime.setText(trenutniKlijent.getPrezime());
         lblKorisnickoIme.setText(trenutniKlijent.getKorisnicko_ime());
         BankovniRacun racun = BankovniRacun.getByBrojRacuna(trenutniKlijent.getBroj_racuna());
-        lblStanje.setText(""+racun.getStanje());
+        lblStanje.setText(Double.toString(racun.getStanje()));
     }
 
     private void getObjekti() {
+        objekti = new ArrayList<>();
         for (Objekat objekat : Objekat.getSviObjekti()) {
             if (objekat.getStatus() == StanjeObjekta.ODOBREN) {
                 objekti.add(objekat);
@@ -112,7 +113,7 @@ public class KlijentController {
                 boolean matchBrojMjesta;
                 try {
                     matchBrojMjesta = brojMjesta.isEmpty() ||
-                        objekat.getBroj_mjesta() >= Integer.parseInt(tfBrojMjesta.getText());
+                        objekat.getBroj_mjesta() <= Integer.parseInt(tfBrojMjesta.getText());
                 } catch (NumberFormatException e) {
                     matchBrojMjesta = true;
                 }
@@ -134,7 +135,8 @@ public class KlijentController {
     private void getRezervacije() {
         for (Proslava proslava : Proslava.getSveProslave()) {
             if (proslava.getKlijent().getId() == trenutniKlijent.getId()) {
-                lvRezervacija.getItems().add(proslava);
+                System.out.println(proslava);
+                lvProslave.getItems().add(proslava);
             }
         }
     }

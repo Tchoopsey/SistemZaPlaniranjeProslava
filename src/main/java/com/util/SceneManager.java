@@ -6,6 +6,7 @@ import com.model.Admin;
 import com.model.Klijent;
 import com.model.Korisnik;
 import com.model.Objekat;
+import com.model.Proslava;
 import com.model.Vlasnik;
 
 import javafx.fxml.FXMLLoader;
@@ -17,6 +18,8 @@ public class SceneManager {
     private static Stage mainStage;
     private static Korisnik trenutniKorisnik;
     private static Objekat  trenutniObjekat;
+    private static Proslava trenutnaProslava;
+
 
     public static void init(Stage stage) {
         mainStage = stage;
@@ -39,6 +42,14 @@ public class SceneManager {
 
     public static void setKorisnik(Korisnik korisnik) {
         trenutniKorisnik = korisnik;
+    }
+
+    public static Proslava getProslava() {
+        return trenutnaProslava;
+    }
+
+    public static void setProslava(Proslava proslava) {
+        trenutnaProslava = proslava;
     }
 
     public static void showLoginScene() throws IOException {
@@ -111,10 +122,10 @@ public class SceneManager {
         mainStage.show();
     }
 
-    public static void showRezervacijaScene(Klijent klijent) throws IOException {
-        // trenutniObjekat = objekat;
+    public static void showIzmjeniRezervacijuScene(Klijent klijent, Proslava proslava) throws IOException {
+        trenutnaProslava = proslava;
         trenutniKorisnik = klijent;
-        FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource("/views/RezervacijeScene.fxml"));
+        FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource("/views/IzmjeniRezervacijuScene.fxml"));
         Scene scene = new Scene(loader.load());
         mainStage.setScene(scene);
         mainStage.setResizable(false);

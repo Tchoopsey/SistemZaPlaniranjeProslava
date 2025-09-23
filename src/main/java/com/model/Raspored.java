@@ -57,7 +57,7 @@ public class Raspored {
         this.gosti = gosti;
     }
 
-    public static List<Raspored> getSviStolovi() {
+    public static List<Raspored> getSviRasporedi() {
         return sviRasporedi;
     }
 

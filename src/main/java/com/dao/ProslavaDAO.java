@@ -6,8 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,13 +59,17 @@ public class ProslavaDAO {
 
         String sql = "INSERT INTO " 
             + "Proslava (Objekat_id, Klijent_id, Meni_id, datum, broj_gostiju," 
-            + " ukupna_cijena, uplacen_iznos VALUES (?, ?, ?, ?, ?, ?, ?)";
+            + " ukupna_cijena, uplacen_iznos) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, proslava.getObjekat().getId());
             ps.setInt(2, proslava.getKlijent().getId());
-            ps.setInt(3, proslava.getMeni().getId());
+            if (proslava.getMeni() != null) {
+                ps.setInt(3, proslava.getMeni().getId());
+            } else {
+                ps.setNull(3, Types.INTEGER);
+            }
             ps.setDate(4, Date.valueOf(proslava.getDatum()));
             ps.setInt(5, proslava.getBroj_gostiju());
             ps.setDouble(6, proslava.getUkupna_cijena());
@@ -144,10 +148,10 @@ public class ProslavaDAO {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     Proslava proslava = new Proslava();
-                    proslava.setObjekat(ObjekatDAO.getById(rs.getInt("Objekat_id")));
-                    proslava.setKlijent(KlijentDAO.getById(rs.getInt("Klijent_id")));
-                    proslava.setMeni(MeniDAO.getById(rs.getInt("Meni_id")));
-                    proslava.setDatum(rs.getString("datum"));
+                    proslava.setObjekat(Objekat.getById(rs.getInt("Objekat_id")));
+                    proslava.setKlijent(Klijent.getById(rs.getInt("Klijent_id")));
+                    proslava.setMeni(Meni.getById(rs.getInt("Meni_id")));
+                    proslava.setDatum(rs.getDate("datum").toLocalDate());
                     proslava.setBroj_gostiju(rs.getInt("broj_gostiju"));
                     proslava.setUkupna_cijena(rs.getDouble("ukupna_cijena"));
                     proslava.setUplacen_iznos(rs.getDouble("uplacen_iznos"));
