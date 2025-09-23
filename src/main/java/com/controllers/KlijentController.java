@@ -1,13 +1,20 @@
 package com.controllers;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.model.BankovniRacun;
 import com.model.Klijent;
 import com.model.Objekat;
 import com.model.Proslava;
+import com.model.StanjeObjekta;
 import com.util.SceneManager;
 
+import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -16,6 +23,8 @@ import javafx.scene.control.TextField;
 public class KlijentController {
 
     static Klijent trenutniKlijent;
+    static List<Objekat> objekti = new ArrayList<>();
+    ObservableList<Objekat> obsObjekti;
     @FXML Label lblIme;
     @FXML Label lblPrezime;
     @FXML Label lblKorisnickoIme;
@@ -29,8 +38,9 @@ public class KlijentController {
     @FXML
     private void initialize() {
         setAllUserData();
+        filterObjekti(obsObjekti, lvObjekti);
 
-        printObjekti();
+        getRezervacije();
     }
 
     @FXML
@@ -77,12 +87,55 @@ public class KlijentController {
         lblStanje.setText(""+racun.getStanje());
     }
 
-    private void printObjekti() {
+    private void getObjekti() {
         for (Objekat objekat : Objekat.getSviObjekti()) {
-            if (trenutniKlijent.getId() == objekat.getVlasnik().getId()) {
-                lvObjekti.getItems().add(objekat);
+            if (objekat.getStatus() == StanjeObjekta.ODOBREN) {
+                objekti.add(objekat);
             }
         }
     }
-    
+
+    private void filterObjekti(
+        ObservableList<Objekat> obsObjekti,
+        ListView<Objekat> lvObjekti
+    ) {
+        getObjekti();
+        obsObjekti = FXCollections.observableArrayList(objekti);
+        FilteredList<Objekat> filteredObjekti = new FilteredList<>(obsObjekti, o -> true);
+        lvObjekti.setItems(filteredObjekti);
+        ChangeListener<String> objektiListener = (obs, oldVal, newVal) -> {
+            filteredObjekti.setPredicate(objekat -> {
+                String brojMjesta = tfBrojMjesta.getText();
+                String datum = tfDatum.getText();
+                String grad = tfGrad.getText().toLowerCase();
+
+                boolean matchBrojMjesta;
+                try {
+                    matchBrojMjesta = brojMjesta.isEmpty() ||
+                        objekat.getBroj_mjesta() >= Integer.parseInt(tfBrojMjesta.getText());
+                } catch (NumberFormatException e) {
+                    matchBrojMjesta = true;
+                }
+
+                boolean matchDatum = datum.isEmpty() ||
+                    !objekat.getDatumi().contains(datum);
+                boolean matchGrad = grad.isEmpty() ||
+                    objekat.getGrad().toLowerCase().contains(grad);
+
+                return matchBrojMjesta && matchDatum && matchGrad;
+            });
+        };
+
+        tfBrojMjesta.textProperty().addListener(objektiListener);
+        tfDatum.textProperty().addListener(objektiListener);
+        tfGrad.textProperty().addListener(objektiListener);
+    }
+
+    private void getRezervacije() {
+        for (Proslava proslava : Proslava.getSveProslave()) {
+            if (proslava.getKlijent().getId() == trenutniKlijent.getId()) {
+                lvRezervacija.getItems().add(proslava);
+            }
+        }
+    }
 }

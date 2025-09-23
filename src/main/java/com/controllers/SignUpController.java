@@ -15,6 +15,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
@@ -33,9 +34,9 @@ public class SignUpController {
     @FXML private Label lblBrojRacunaError;
     @FXML private TextField tfKorisnickoIme;
     @FXML private Label lblKorisnickoImeError;
-    @FXML private TextField tfLozinka;
+    @FXML private PasswordField pfLozinka;
     @FXML private Label lblLozinkaError;
-    @FXML private TextField tfPotvrda;
+    @FXML private PasswordField pfPotvrda;
     @FXML private Label lblPotvrdaError;
     @FXML private Button btnKreiraj;
     @FXML private Button btnOtkazi;
@@ -60,8 +61,8 @@ public class SignUpController {
         String broj_racuna = tfBrojRacuna.getText();
         String jmbg = tfJMBG.getText();
         String korisnicko_ime = tfKorisnickoIme.getText();
-        String password = tfLozinka.getText();
-        String pw_confirm = tfPotvrda.getText();
+        String password = pfLozinka.getText();
+        String pw_confirm = pfPotvrda.getText();
         String selected = tgKorisnik.getSelectedToggle().getUserData().toString();
 
         if (!password.equals(pw_confirm)) {
@@ -163,8 +164,8 @@ public class SignUpController {
         tfKorisnickoIme.setUserData("");
         tfJMBG.setUserData("");
         tfBrojRacuna.setUserData("");
-        tfLozinka.setUserData("");
-        tfPotvrda.setUserData("");
+        pfLozinka.setUserData("");
+        pfPotvrda.setUserData("");
         rbKlijent.setUserData("Klijent");
         rbVlasnik.setUserData("Vlasnik");
     }

@@ -10,12 +10,13 @@ import com.util.SceneManager;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
 public class LoginController {
 
     @FXML private TextField tfKorisnickoIme;
-    @FXML private TextField tfLozinka;
+    @FXML private PasswordField pfLozinka;
     @FXML private Button btnLogin;
     @FXML private Button btnKreiraj;
 
@@ -27,7 +28,7 @@ public class LoginController {
     @FXML 
     private void handleLogin() {
         String korisnicko_ime = tfKorisnickoIme.getText();
-        String lozinka = tfLozinka.getText();
+        String lozinka = pfLozinka.getText();
 
         if (Korisnik.checkKorisnicko_ime(korisnicko_ime).equals("Admin")) {
             Admin admin = Admin.getAdmin(korisnicko_ime, lozinka);
@@ -77,6 +78,6 @@ public class LoginController {
 
     private void setAllUserData() {
         tfKorisnickoIme.setUserData("");
-        tfLozinka.setUserData("");
+        pfLozinka.setUserData("");
     }
 }

@@ -12,6 +12,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
 public class CreateAdminController {
@@ -23,9 +24,9 @@ public class CreateAdminController {
     @FXML private Label lblPrezimeError;
     @FXML private TextField tfKorisnickoIme;
     @FXML private Label lblKorisnickoImeError;
-    @FXML private TextField tfLozinka;
+    @FXML private PasswordField pfLozinka;
     @FXML private Label lblLozinkaError;
-    @FXML private TextField tfPotvrda;
+    @FXML private PasswordField pfPotvrda;
     @FXML private Label lblPotvrdaError;
     @FXML private Button btnKreiraj;
     @FXML private Button btnOtkazi;
@@ -44,8 +45,8 @@ public class CreateAdminController {
         String ime = tfIme.getText();
         String prezime = tfPrezime.getText();
         String korisnicko_ime = tfKorisnickoIme.getText();
-        String password = tfLozinka.getText();
-        String pw_confirm = tfPotvrda.getText();
+        String password = pfLozinka.getText();
+        String pw_confirm = pfPotvrda.getText();
 
         if (!password.equals(pw_confirm)) {
             System.err.println("Kreiranje korisnika neuspjesno!");
@@ -113,8 +114,8 @@ public class CreateAdminController {
         tfIme.setUserData("");
         tfPrezime.setUserData("");
         tfKorisnickoIme.setUserData("");
-        tfLozinka.setUserData("");
-        tfPotvrda.setUserData("");
+        pfLozinka.setUserData("");
+        pfPotvrda.setUserData("");
     }
 
     private void clearLabels() {
