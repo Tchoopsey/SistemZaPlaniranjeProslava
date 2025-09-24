@@ -1,7 +1,9 @@
 package com.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.dao.ObjekatDAO;
 
@@ -15,14 +17,14 @@ public class Objekat {
     private String adresa;
     private int broj_mjesta;
     private int broj_stolova;
-    private String datumi;
+    private List<String> datumi;
     private double zarada;
     private StanjeObjekta status;
 
     private static List<Objekat> sviObjekti = new ArrayList<>();
 
     public Objekat(int id, Vlasnik vlasnik, String naziv, double cijena_rezervacije, 
-            String grad, String adresa, int broj_mjesta, int broj_stolova, String datumi,
+            String grad, String adresa, int broj_mjesta, int broj_stolova, List<String> datumi,
             double zarada, StanjeObjekta status) {
         this.id = id;
         this.vlasnik = vlasnik;
@@ -33,6 +35,7 @@ public class Objekat {
         this.broj_mjesta = broj_mjesta;
         this.broj_stolova = broj_stolova;
         this.datumi = datumi;
+        this.zarada = zarada;
         this.status = status;
     }
 
@@ -71,7 +74,7 @@ public class Objekat {
         return id;
     }
 
-    public String getDatumi() {
+    public List<String> getDatumi() {
         return datumi;
     }
 
@@ -119,7 +122,7 @@ public class Objekat {
         this.broj_stolova = broj_stolova;
     }
 
-    public void setDatumi(String datumi) {
+    public void setDatumi(List<String> datumi) {
         this.datumi = datumi;
     }
 
@@ -133,6 +136,22 @@ public class Objekat {
 
     public static void setSviObjekti(List<Objekat> sviObjekti) {
         Objekat.sviObjekti = sviObjekti;
+    }
+
+    public static String datumiFromList(List<String> list) {
+        String datumi = String.join(",", list);
+
+        return datumi;
+    }
+
+    public static List<String> datumiFromString(String string) {
+        if (string == null || string.isBlank()) {
+            return new ArrayList<>();
+        }
+
+        return Arrays.stream(string.split(","))
+            .filter(s -> !s.isBlank())
+            .collect(Collectors.toCollection(ArrayList::new));
     }
 
     public static Objekat getById(int objekat_id) {
@@ -165,11 +184,7 @@ public class Objekat {
     }
 
     public static void removeObjekatFromList(String naziv) {
-        for (Objekat objekat : sviObjekti) {
-            if (objekat.getNaziv().equals(naziv)) {
-                Objekat.sviObjekti.remove(objekat);
-            }
-        }
+        sviObjekti.removeIf(o -> o.getNaziv().equals(naziv));
     }
 
     @Override

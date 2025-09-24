@@ -83,11 +83,7 @@ public class Meni {
     }
 
     public static void removeMeniFromList(int id) {
-        for (Meni meni : sviMeniji) {
-            if (meni.getId() == id) {
-                Meni.sviMeniji.remove(meni);
-            }
-        }
+        sviMeniji.removeIf(m -> m.getId() == id);
     }
 
     public static Meni getById(int meni_id) {

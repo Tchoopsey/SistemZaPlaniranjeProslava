@@ -78,11 +78,7 @@ public class Vlasnik extends Korisnik {
     }
 
     public static void removeVlasnikFromList(String jmbg) {
-        for (Vlasnik v : vlasnici) {
-            if (v.getJmbg().equals(jmbg)) {
-                Vlasnik.vlasnici.remove(v);
-            }
-        }
+        vlasnici.removeIf(v -> v.getJmbg().equals(jmbg));
     }
 
     public static Vlasnik getById(int id) {

@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.dao.MeniDAO;
+import com.dao.ObavjestenjeDAO;
 import com.dao.ObjekatDAO;
 import com.dao.StoDAO;
 import com.model.BankovniRacun;
 import com.model.Meni;
+import com.model.Obavjestenje;
 import com.model.Objekat;
 import com.model.StanjeObjekta;
 import com.model.Sto;
@@ -27,6 +29,8 @@ import javafx.scene.control.TextField;
 public class ObjekatController {
 
     private static Vlasnik trenutniVlasnik;
+    private static Objekat trenutniObjekat;
+
     private static int ukupanBrojMjesta = 0;
     private static List<String> stolovi = new ArrayList<>();
     private static List<String> meniji  = new ArrayList<>();
@@ -55,8 +59,10 @@ public class ObjekatController {
 
     @FXML
     private void initialize() {
-        trenutniVlasnik = (Vlasnik) SceneManager.getKorisnik();
         setAllUserData();
+        if (trenutniObjekat.getNaziv() != null) {
+            fixObjekat();
+        }
     }
 
     @FXML
@@ -200,7 +206,7 @@ public class ObjekatController {
             adresa, 
             Integer.parseInt(brojMjesta),
             stolovi.size(), 
-            "", 
+            new ArrayList<>(),
             0, 
             StanjeObjekta.NA_CEKANJU
         );
@@ -224,8 +230,14 @@ public class ObjekatController {
 
         clearInput();
     }
-    
+
     private void setAllUserData() {
+        trenutniVlasnik = (Vlasnik) SceneManager.getKorisnik();
+        if (SceneManager.getObjekat() == null) {
+            trenutniObjekat = new Objekat();
+        } else {
+            trenutniObjekat = SceneManager.getObjekat();
+        }
         lblIme.setText(trenutniVlasnik.getIme());
         lblPrezime.setText(trenutniVlasnik.getPrezime());
         lblKorisnickoIme.setText(trenutniVlasnik.getKorisnicko_ime());
@@ -241,6 +253,21 @@ public class ObjekatController {
         tfCijenaMenija.setUserData("");
         taOpisMenija.clear();
         taOpisMenija.setWrapText(true);
+
+    }
+
+    private void fixObjekat() {
+        tfNaziv.setText(trenutniObjekat.getNaziv());
+        tfCijenaRezervacije.setText(
+            Double.toString(trenutniObjekat.getCijena_rezervacije()));
+        tfGrad.setText(trenutniObjekat.getGrad());
+        tfAdresa.setText(trenutniObjekat.getAdresa());
+        tfBrojMjesta.setText(Integer.toString(trenutniObjekat.getBroj_mjesta()));
+        Obavjestenje obavjestenje = Obavjestenje.getByObjekatId(trenutniObjekat.getId());
+        ObavjestenjeDAO obavjestenjeDAO = new ObavjestenjeDAO();
+        obavjestenjeDAO.removeObavjestenje(obavjestenje.getId());
+        ObjekatDAO objekatDAO = new ObjekatDAO();
+        objekatDAO.removeObjekat(trenutniObjekat.getNaziv());
     }
 
     private void clearInput() {

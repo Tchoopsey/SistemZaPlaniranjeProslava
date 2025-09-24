@@ -73,10 +73,16 @@ public class Obavjestenje {
     }
 
     public static void removeObavjestenjeFromList(int id) {
+        svaObavjestenja.removeIf(o -> o.getId() == id);
+    }
+
+    public static Obavjestenje getByObjekatId(int objekat_id) {
         for (Obavjestenje obavjestenje : svaObavjestenja) {
-            if (obavjestenje.getId() == id) {
-                Obavjestenje.svaObavjestenja.remove(obavjestenje);
+            if (obavjestenje.getObjekat().getId() == objekat_id) {
+                return obavjestenje;
             }
         }
+
+        return null;
     }
 }

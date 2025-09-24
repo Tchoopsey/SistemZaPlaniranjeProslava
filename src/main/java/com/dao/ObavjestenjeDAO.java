@@ -106,25 +106,4 @@ public class ObavjestenjeDAO {
             return false;
         }
     }
-    
-    public static Obavjestenje getById(int id) throws SQLException {
-        String sql = "SELECT * FROM Obavjestenje WHERE id = ?";
-
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    Obavjestenje obavjestenje = new Obavjestenje();
-                    obavjestenje.setObjekat(ObjekatDAO.getById(rs.getInt("Objekat_id")));
-                    obavjestenje.setTekst(rs.getString("tekst"));
-                    
-                    return obavjestenje;
-                }
-            }        
-        } 
-
-        return null;
-    }
-    
 }

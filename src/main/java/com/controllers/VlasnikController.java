@@ -3,40 +3,56 @@ package com.controllers;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
+import com.dao.MeniDAO;
+import com.dao.ObavjestenjeDAO;
+import com.dao.ObjekatDAO;
+import com.dao.StoDAO;
 import com.model.BankovniRacun;
+import com.model.Meni;
+import com.model.Obavjestenje;
 import com.model.Objekat;
+import com.model.Proslava;
 import com.model.StanjeObjekta;
+import com.model.Sto;
 import com.model.Vlasnik;
 import com.util.SceneManager;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.Alert.AlertType;
 import javafx.util.StringConverter;
 
 public class VlasnikController {
 
     static Vlasnik trenutniVlasnik;
+    static Obavjestenje obavjestenje;
     @FXML Label lblIme;
     @FXML Label lblPrezime;
     @FXML Label lblKorisnickoIme;
     @FXML Label lblStanje;
-    @FXML ListView<String> lvObjekti;
+    @FXML ComboBox<Objekat> cbObjekti;
+    @FXML TextArea taObjekat;
     @FXML DatePicker dpDatum;
+    @FXML ListView<Proslava> lvProslave;
+    @FXML ListView<Proslava> lvOtkazaneProslave;
+    @FXML ListView<Proslava> lvProtekleProslave;
 
     @FXML
     private void initialize() {
         trenutniVlasnik = (Vlasnik) SceneManager.getKorisnik();
-
-        setFormat();
-        setZauzetiDatumi();
-
-        printObjekti();
+        getObjekti();
         setAllUserData();
     }
 
@@ -53,22 +69,95 @@ public class VlasnikController {
     @FXML
     private void handleDodajObjekat() {
         try {
-            SceneManager.showObjekatScene(trenutniVlasnik);
+            SceneManager.showObjekatScene(trenutniVlasnik, null);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     @FXML
+    private void handleSelectedObjekat() {
+        Objekat selected = cbObjekti.getValue();
+        taObjekat.clear();
+
+        if (selected == null) {
+            taObjekat.clear();
+            return;
+        }
+
+        setFormat();
+        setZauzetiDatumi();
+
+        System.out.println(selected.getZarada());
+        String taText = "Naziv: " +  selected.getNaziv() + "\n"
+            + "Grad: " +  selected.getGrad() + "\n"
+            + "Adresa: " +  selected.getAdresa() + "\n"
+            + "Zarada: " +  selected.getZarada() + "\n"
+            + "Cijena rezervacije: " +  selected.getCijena_rezervacije() + "\n"
+            + "Broj mjesta: " +  selected.getBroj_mjesta() + "\n"
+            + "Broj stolova: " +  selected.getBroj_stolova() + "\n";
+        taObjekat.setText(taText);
+
+        getRezervacije(selected);
+    }
+
     private void setAllUserData() {
-        lvObjekti.setEditable(false);
         lblIme.setText(trenutniVlasnik.getIme());
         lblPrezime.setText(trenutniVlasnik.getPrezime());
         lblKorisnickoIme.setText(trenutniVlasnik.getKorisnicko_ime());
         BankovniRacun racun = BankovniRacun.getByBrojRacuna(trenutniVlasnik.getBroj_racuna());
-        lblStanje.setText(""+racun.getStanje());
+        lblStanje.setText(Double.toString(racun.getStanje()));
+        taObjekat.setEditable(false);
+        Objekat objekat = checkObavjestenja();
+        if (obavjestenje != null) {
+            Platform.runLater(() -> rjesiOdbijanje(objekat));
+        }
     }
 
+    private void rjesiOdbijanje(Objekat objekat) {
+        Alert alert = new Alert(AlertType.WARNING);
+        alert.setHeaderText("Objekat je odbijen!!!");
+        alert.setContentText(obavjestenje.getTekst());
+        ButtonType fix = new ButtonType("Popravi objekat");
+        ButtonType obrisi = new ButtonType("Obrisi objekat");
+        alert.getButtonTypes().setAll(fix, obrisi);
+        MeniDAO meniDAO = new MeniDAO();
+        for (Meni meni : new ArrayList<>(Meni.getSviMeniji())) {
+            meniDAO.removeMeni(meni.getId());
+        }
+        StoDAO stoDAO = new StoDAO();
+        for (Sto sto : new ArrayList<>(Sto.getSviStolovi())) {
+            stoDAO.removeSto(sto.getId());
+        }
+
+        alert.showAndWait().ifPresent(res -> {
+            if (res.equals(fix)) {
+                try {
+                    SceneManager.showObjekatScene(trenutniVlasnik, objekat);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else if (res.equals(obrisi)) {
+                ObavjestenjeDAO obavjestenjeDAO = new ObavjestenjeDAO();
+                obavjestenjeDAO.removeObavjestenje(obavjestenje.getId());
+                ObjekatDAO objekatDAO = new ObjekatDAO();
+                objekatDAO.removeObjekat(objekat.getNaziv());
+                cbObjekti.getItems().remove(objekat);
+            }
+        });
+    }
+
+    private Objekat checkObavjestenja() {
+        for (Objekat objekat : Objekat.getSviObjekti()) {
+            if (objekat.getStatus() == StanjeObjekta.ODBIJEN
+                && objekat.getVlasnik().getId() == trenutniVlasnik.getId()) {
+                obavjestenje = Obavjestenje.getByObjekatId(objekat.getId());
+                return objekat;
+            }
+        }
+        return null;
+    }
+    
     private void setFormat() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
@@ -92,11 +181,12 @@ public class VlasnikController {
     }
 
     private void setZauzetiDatumi() {
-        List<LocalDate> zauzetiDatumi = List.of(
-            LocalDate.of(2025, 9, 12), 
-            LocalDate.of(2025, 9, 15), 
-            LocalDate.of(2025, 9, 20)
-        );
+        Objekat objekat = cbObjekti.getValue();
+        List<LocalDate> zauzetiDatumi = objekat.getDatumi()
+            .stream().filter(s -> s != null && !s.isBlank())
+            .map(LocalDate::parse)
+            .toList();
+
         dpDatum.setDayCellFactory(picker -> new DateCell() {
             @Override
             public void updateItem(LocalDate datum, boolean empty) {
@@ -127,12 +217,26 @@ public class VlasnikController {
         });
     }
 
-    private void printObjekti() {
+    private void getObjekti() {
         for (Objekat objekat : Objekat.getSviObjekti()) {
-            if (trenutniVlasnik.getId() == objekat.getVlasnik().getId()
-                && objekat.getStatus() == StanjeObjekta.ODOBREN) {
-                lvObjekti.getItems().add(objekat.getNaziv() + ", " + 
-                    objekat.getGrad() + ", " + objekat.getAdresa());
+            System.out.println(objekat.getZarada());
+            if (trenutniVlasnik.getId() == objekat.getVlasnik().getId()) {
+                cbObjekti.getItems().add(objekat);
+            }
+        }
+    }
+
+    private void getRezervacije(Objekat objekat) {
+        for (Proslava proslava : Proslava.getSveProslave()) {
+            if (proslava.getObjekat().getId() == objekat.getId()) {
+                if (proslava.getDatum().isBefore(LocalDate.now())) {
+                    lvProtekleProslave.getItems().add(proslava);
+                    continue;
+                } else if (proslava.getStatus().equals("Otkazana")) {
+                    lvOtkazaneProslave.getItems().add(proslava);
+                    continue;
+                }
+                lvProslave.getItems().add(proslava);
             }
         }
     }

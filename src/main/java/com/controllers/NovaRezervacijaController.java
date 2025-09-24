@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.dao.BankovniRacunDAO;
+import com.dao.ObjekatDAO;
 import com.dao.ProslavaDAO;
 import com.model.BankovniRacun;
 import com.model.Klijent;
@@ -109,6 +110,7 @@ public class NovaRezervacijaController {
             trenutniObjekat, 
             trenutniKlijent, 
             null, 
+            "Trenutna",
             datum, 
             0, 
             uplacen_iznos, 
@@ -117,6 +119,13 @@ public class NovaRezervacijaController {
 
         ProslavaDAO proslavaDAO = new ProslavaDAO();
         proslavaDAO.createProslava(proslava);
+
+        List<String> datumi = trenutniObjekat.getDatumi();
+        datumi.add(datum.toString());
+        trenutniObjekat.setDatumi(datumi);
+        trenutniObjekat.setZarada(trenutniObjekat.getZarada() + uplacen_iznos);
+        ObjekatDAO objekatDAO = new ObjekatDAO();
+        objekatDAO.updateObjekat(trenutniObjekat, trenutniObjekat.getNaziv());
 
         oduzmiNovacKlijentu(uplacen_iznos);
         dodajNovacVlasniku(uplacen_iznos);
@@ -204,11 +213,11 @@ public class NovaRezervacijaController {
 
     @FXML
     private void setUsedDates() {
-        List<LocalDate> takenDates = List.of(
-            LocalDate.of(2025, 9, 12), 
-            LocalDate.of(2025, 9, 15), 
-            LocalDate.of(2025, 9, 20)
-        );
+        List<LocalDate> zauzetiDatumi = trenutniObjekat.getDatumi()
+            .stream().filter(s -> s != null && !s.isBlank())
+            .map(LocalDate::parse)
+            .toList();
+
         dpDatum.setDayCellFactory(picker -> new DateCell() {
             @Override
             public void updateItem(LocalDate datum, boolean empty) {
@@ -220,9 +229,13 @@ public class NovaRezervacijaController {
                     return;
                 }
 
-                if (takenDates.contains(datum)) {
-                    Tooltip tooltip = new Tooltip("Datum je zauzet!");
-                    setTooltip(tooltip);
+                if (datum.isBefore(LocalDate.now())) {
+                    setDisable(true);
+                    setStyle("-fx-background-color: lightgray; -fx-text-fill: white;");
+                    if (zauzetiDatumi.contains(datum)) {
+                        setStyle("-fx-background-color: gray; -fx-text-fill: white;");
+                    }
+                } else if (zauzetiDatumi.contains(datum)) {
                     setDisable(true);
                     setStyle("-fx-background-color: red; -fx-text-fill: white;");
                 } else {

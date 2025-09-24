@@ -94,24 +94,4 @@ public class BankovniRacunDAO {
             return false;
         }
     }
-
-    public BankovniRacun getById(int id) throws SQLException {
-        String sql = "SELECT * FROM `Bankovni Racun` WHERE id = ?";
-
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    BankovniRacun bankovniRacun = new BankovniRacun();
-
-                    bankovniRacun.setBroj_racuna(rs.getString("broj_racuna"));
-
-                    return bankovniRacun;
-                }
-            }        
-        } 
-
-        return null;
-    }
 }

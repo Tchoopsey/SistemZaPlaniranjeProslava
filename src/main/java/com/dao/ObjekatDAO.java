@@ -45,7 +45,7 @@ public class ObjekatDAO {
                     adresa, 
                     broj_mjesta, 
                     broj_stolova, 
-                    datumi,
+                    Objekat.datumiFromString(datumi),
                     zarada, 
                     status
                 ));
@@ -74,7 +74,7 @@ public class ObjekatDAO {
             ps.setString(5, objekat.getAdresa());
             ps.setInt(6, objekat.getBroj_mjesta());
             ps.setInt(7, objekat.getBroj_stolova());
-            ps.setString(8, objekat.getDatumi());
+            ps.setString(8, Objekat.datumiFromList(objekat.getDatumi()));
             ps.setDouble(9, objekat.getZarada());
             ps.setString(10, StanjeObjekta.toString(objekat.getStatus()));
 
@@ -131,7 +131,7 @@ public class ObjekatDAO {
             ps.setString(5, objekat.getAdresa());
             ps.setInt(6, objekat.getBroj_mjesta());
             ps.setInt(7, objekat.getBroj_stolova());
-            ps.setString(8, objekat.getDatumi());
+            ps.setString(8, Objekat.datumiFromList(objekat.getDatumi()));
             ps.setDouble(9, objekat.getZarada());
             ps.setString(10, StanjeObjekta.toString(objekat.getStatus()));
             ps.setString(11, naziv);
@@ -145,33 +145,4 @@ public class ObjekatDAO {
             return false;
         }
     }
-    
-    public static Objekat getById(int id) throws SQLException {
-        String sql = "SELECT * FROM Objekat WHERE id = ?";
-
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    Objekat objekat = new Objekat();
-                    objekat.setVlasnik(VlasnikDAO.getById(rs.getInt("Vlasnik_id")));
-                    objekat.setNaziv(rs.getString("naziv"));
-                    objekat.setCijena_rezervacije(rs.getDouble("cijena_rezervacije"));
-                    objekat.setGrad(rs.getString("grad"));
-                    objekat.setAdresa(rs.getString("adresa"));
-                    objekat.setBroj_mjesta(rs.getInt("broj_mjesta"));
-                    objekat.setBroj_stolova(rs.getInt("broj_stolova"));
-                    objekat.setDatumi(rs.getString("datumi"));
-                    objekat.setZarada(rs.getDouble("zarada"));
-                    objekat.setStatus(StanjeObjekta.fromString(rs.getString("status")));
-                    
-                    return objekat;
-                }
-            }        
-        } 
-
-        return null;
-    }
-
 }

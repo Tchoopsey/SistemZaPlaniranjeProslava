@@ -114,24 +114,4 @@ public class MeniDAO {
             return false;
         }
     }
-    
-    public static Meni getById(int id) throws SQLException {
-        String sql = "SELECT * FROM Meni WHERE id = ?";
-
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    Meni meni = new Meni();
-                    meni.setObjekat(ObjekatDAO.getById(rs.getInt("Objekat_id")));
-                    meni.setOpis(rs.getString("opis"));
-                    meni.setCijena_po_osobi(rs.getDouble("cijena_po_osobi"));
-                    return meni;
-                }
-            }        
-        } 
-
-        return null;
-    }
 }

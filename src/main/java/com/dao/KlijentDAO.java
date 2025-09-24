@@ -129,29 +129,4 @@ public class KlijentDAO {
             return false;
         }
     }
-
-    public static Klijent getById(int id) throws SQLException {
-        String sql = "SELECT * FROM Klijent WHERE id = ?";
-
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    Klijent klijent = new Klijent();
-                    klijent.setIme(rs.getString("ime"));
-                    klijent.setPrezime(rs.getString("prezime"));
-                    klijent.setJmbg("jmbg");
-                    klijent.setBroj_racuna("broj_racuna");
-                    klijent.setKorisnicko_ime("korisnicko_ime");
-                    klijent.setPassword("lozinka");
-
-                    return klijent;
-                }
-            }        
-        } 
-
-        return null;
-    }
-
 }

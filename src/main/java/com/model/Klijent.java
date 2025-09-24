@@ -54,11 +54,7 @@ public class Klijent extends Korisnik {
     }
 
     public static void removeKlijentFromList(String jmbg) {
-        for (Klijent k : klijenti) {
-            if (k.getJmbg().equals(jmbg)) {
-                Klijent.klijenti.remove(k);
-            }
-        }
+        klijenti.removeIf(k -> k.getJmbg().equals(jmbg));
     }
 
     public int getId() {

@@ -31,7 +31,13 @@ public class ProslavaDAO {
                 int objekat_id = rs.getInt("Objekat_id");
                 int klijent_id = rs.getInt("Klijent_id");
                 int meni_id = rs.getInt("Meni_id");
+                String status = rs.getString("Proslavacol");
                 LocalDate datum = rs.getDate("datum").toLocalDate();
+
+                if (status.equals("Trenutna") && datum.isBefore(LocalDate.now())) {
+                    status = "Protekla";
+                }
+
                 int broj_gostiju = rs.getInt("broj_gostiju");
                 double ukupna_cijena = rs.getDouble("ukupna_cijena");
                 double uplacen_iznos = rs.getDouble("uplacen_iznos");
@@ -41,6 +47,7 @@ public class ProslavaDAO {
                     Objekat.getById(objekat_id),
                     Klijent.getById(klijent_id),
                     Meni.getById(meni_id),
+                    status,
                     datum,
                     broj_gostiju,
                     ukupna_cijena,
@@ -58,8 +65,8 @@ public class ProslavaDAO {
     public boolean createProslava(Proslava proslava) {
 
         String sql = "INSERT INTO " 
-            + "Proslava (Objekat_id, Klijent_id, Meni_id, datum, broj_gostiju," 
-            + " ukupna_cijena, uplacen_iznos) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            + "Proslava (Objekat_id, Klijent_id, Meni_id, Proslavacol, datum, broj_gostiju," 
+            + " ukupna_cijena, uplacen_iznos) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -70,10 +77,11 @@ public class ProslavaDAO {
             } else {
                 ps.setNull(3, Types.INTEGER);
             }
-            ps.setDate(4, Date.valueOf(proslava.getDatum()));
-            ps.setInt(5, proslava.getBroj_gostiju());
-            ps.setDouble(6, proslava.getUkupna_cijena());
-            ps.setDouble(7, proslava.getUplacen_iznos());
+            ps.setString(4, proslava.getStatus());
+            ps.setDate(5, Date.valueOf(proslava.getDatum()));
+            ps.setInt(6, proslava.getBroj_gostiju());
+            ps.setDouble(7, proslava.getUkupna_cijena());
+            ps.setDouble(8, proslava.getUplacen_iznos());
 
             int rowsAffected = ps.executeUpdate();
             if (rowsAffected == 0) {
@@ -115,19 +123,24 @@ public class ProslavaDAO {
 
     public boolean updateProslava(Proslava proslava, int id) {
         String sql = "UPDATE Proslava SET Objekat_id = ?, Klijent_id = ?," 
-            + " Meni_id = ?, datum = ?, broj_gostiju = ?, ukupna_cijena = ?,"
-            + " uplacen_iznos = ? WHERE naziv = ?";
+            + " Meni_id = ?, Proslavacol = ?, datum = ?, broj_gostiju = ?, ukupna_cijena = ?,"
+            + " uplacen_iznos = ? WHERE id = ?";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, proslava.getObjekat().getId());
             ps.setInt(2, proslava.getKlijent().getId());
-            ps.setInt(3, proslava.getMeni().getId());
-            ps.setDate(4, Date.valueOf(proslava.getDatum()));
-            ps.setInt(5, proslava.getBroj_gostiju());
-            ps.setDouble(6, proslava.getUkupna_cijena());
-            ps.setDouble(7, proslava.getUplacen_iznos());
-            ps.setInt(8, id);
+            if (proslava.getMeni() != null) {
+                ps.setInt(3, proslava.getMeni().getId());
+            } else {
+                ps.setNull(3, Types.INTEGER);
+            }
+            ps.setString(4, proslava.getStatus());
+            ps.setDate(5, Date.valueOf(proslava.getDatum()));
+            ps.setInt(6, proslava.getBroj_gostiju());
+            ps.setDouble(7, proslava.getUkupna_cijena());
+            ps.setDouble(8, proslava.getUplacen_iznos());
+            ps.setInt(9, id);
 
             Proslava.updateProslavaList(proslava, id);
 
@@ -137,30 +150,5 @@ public class ProslavaDAO {
             System.err.println("Updating Proslava was unsuccessful!!!");
             return false;
         }
-    }
-    
-    public static Proslava getById(int id) throws SQLException {
-        String sql = "SELECT * FROM Proslava WHERE id = ?";
-
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    Proslava proslava = new Proslava();
-                    proslava.setObjekat(Objekat.getById(rs.getInt("Objekat_id")));
-                    proslava.setKlijent(Klijent.getById(rs.getInt("Klijent_id")));
-                    proslava.setMeni(Meni.getById(rs.getInt("Meni_id")));
-                    proslava.setDatum(rs.getDate("datum").toLocalDate());
-                    proslava.setBroj_gostiju(rs.getInt("broj_gostiju"));
-                    proslava.setUkupna_cijena(rs.getDouble("ukupna_cijena"));
-                    proslava.setUplacen_iznos(rs.getDouble("uplacen_iznos"));
-                    
-                    return proslava;
-                }
-            }        
-        } 
-
-        return null;
     }
 }

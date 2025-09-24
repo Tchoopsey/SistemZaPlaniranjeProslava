@@ -12,6 +12,7 @@ public class Proslava {
     private Objekat objekat;
     private Klijent klijent;
     private Meni meni;
+    private String status;
     private LocalDate datum;
     private int broj_gostiju;
     private double ukupna_cijena;
@@ -19,12 +20,13 @@ public class Proslava {
 
     private static List<Proslava> sveProslave = new ArrayList<>();
 
-    public Proslava(int id, Objekat objekat, Klijent klijent, Meni meni, 
+    public Proslava(int id, Objekat objekat, Klijent klijent, Meni meni, String status,
         LocalDate datum, int broj_gostiju, double ukupna_cijena, double uplacen_iznos) {
         this.id = id;
         this.objekat = objekat;
         this.klijent = klijent;
         this.meni = meni;
+        this.status = status;
         this.datum = datum;
         this.broj_gostiju = broj_gostiju;
         this.ukupna_cijena = ukupna_cijena;
@@ -106,6 +108,14 @@ public class Proslava {
         return uplacen_iznos;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public static void createProslavaList() {
         ProslavaDAO dao = new ProslavaDAO();
         sveProslave = dao.getAllProslave();
@@ -125,11 +135,7 @@ public class Proslava {
     }
 
     public static void removeProslavaFromList(int id) {
-        for (Proslava proslava : sveProslave) {
-            if (proslava.getId() == id) {
-                Proslava.sveProslave.remove(proslava);
-            }
-        }
+        sveProslave.removeIf(p -> p.getId() == id);
     }
 
     public static Proslava getById(int proslava_id) {

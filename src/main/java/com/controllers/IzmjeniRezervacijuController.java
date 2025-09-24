@@ -1,11 +1,11 @@
 package com.controllers;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.dao.BankovniRacunDAO;
+import com.dao.ObjekatDAO;
 import com.dao.ProslavaDAO;
 import com.dao.RasporedDAO;
 import com.model.BankovniRacun;
@@ -20,10 +20,8 @@ import com.util.SceneManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 
 public class IzmjeniRezervacijuController {
@@ -44,14 +42,13 @@ public class IzmjeniRezervacijuController {
     @FXML Label lblBrojMjesta;
     @FXML Label lblBrojStolova;
 
-    @FXML TextField tfBrojGostiju;
     @FXML ComboBox<StoWrapper> cbSto;
     @FXML ComboBox<MeniWrapper> cbMeni;
     @FXML TextArea taGosti;
 
     static List<Sto> stolovi = new ArrayList<>();
     static List<Meni> meniji = new ArrayList<>();
-    static List<Raspored> rasporedi = new ArrayList<>();
+    static List<Raspored> rasporedi;
     
     @FXML
     private void initialize() {
@@ -74,16 +71,9 @@ public class IzmjeniRezervacijuController {
     private void handleDodajRezervaciju() {
         Alert alert = new Alert(AlertType.WARNING);
 
-        int broj_gostiju;
-        try {
-            broj_gostiju = Integer.parseInt(tfBrojGostiju.getText());
-        } catch (NumberFormatException e) {
-            broj_gostiju = 0;
-            alert.setTitle("Kreiranje proslave neuspjesno!");
-            alert.setHeaderText("Polako velmozo!");
-            alert.setContentText("Da li ste unijeli broj gostiju?!");
-            alert.showAndWait();
-            return;
+        int broj_gostiju = 0;
+        for (Raspored raspored : rasporedi) {
+            broj_gostiju += raspored.getGosti().size();
         }
 
         Meni meni = cbMeni.getValue().getMeni();
@@ -103,6 +93,11 @@ public class IzmjeniRezervacijuController {
 
         trenutnaProslava.setMeni(meni);
         trenutnaProslava.setUkupna_cijena(ukupna_cijena);
+        trenutnaProslava.setUplacen_iznos(ostatak_uplate);
+
+        trenutniObjekat.setZarada(trenutniObjekat.getZarada() + ostatak_uplate);
+        ObjekatDAO objekatDAO = new ObjekatDAO();
+        objekatDAO.updateObjekat(trenutniObjekat, trenutniObjekat.getNaziv());
 
         ProslavaDAO proslavaDAO = new ProslavaDAO();
         proslavaDAO.updateProslava(trenutnaProslava,
@@ -181,6 +176,8 @@ public class IzmjeniRezervacijuController {
             if (temp.length > selectedSto.getSto().getBroj_mjesta()) {
                 alert.setTitle("Upozorenje!");
                 alert.setContentText("Broj mjesta za goste je manji od unesenog broja gostiju!");
+                alert.showAndWait();
+                return;
             }
 
             for (String gost : temp) {
@@ -189,14 +186,15 @@ public class IzmjeniRezervacijuController {
         }
 
         for (Raspored raspored : rasporedi) {
-            if (raspored.getSto() == selectedSto.getSto()) {
+            if (raspored.getSto().getId() == selectedSto.getSto().getId()) {
                 alert.setTitle("Upozorenje!");
                 alert.setContentText(selectedSto + " je vec zauzet, probajte opciju 'Izmjeni raspored'...");
+                alert.showAndWait();
                 return;
             }
         }
 
-        Raspored raspored = new Raspored(0, selectedSto.getSto(), trenutnaProslava, gosti);
+        Raspored raspored = new Raspored(selectedSto.getSto(), trenutnaProslava, gosti);
         rasporedi.add(raspored);
         RasporedDAO dao = new RasporedDAO();
         dao.createRaspored(raspored);
@@ -213,6 +211,7 @@ public class IzmjeniRezervacijuController {
             if (temp.length > selectedSto.getSto().getBroj_mjesta()) {
                 alert.setTitle("Upozorenje!");
                 alert.setContentText("Broj mjesta za goste je manji od unesenog broja gostiju!");
+                return;
             }
 
             for (String gost : temp) {
@@ -220,10 +219,10 @@ public class IzmjeniRezervacijuController {
             }
         }
 
-        Raspored raspored = new Raspored(0, selectedSto.getSto(), trenutnaProslava, gosti);
+        Raspored raspored = new Raspored(selectedSto.getSto(), trenutnaProslava, gosti);
         rasporedi.add(raspored);
         RasporedDAO dao = new RasporedDAO();
-        dao.updateRaspored(raspored, raspored.getId());
+        dao.updateRaspored(raspored, raspored.getSto().getId());
     }
 
     private void setAllUserData() {
@@ -241,7 +240,6 @@ public class IzmjeniRezervacijuController {
         lblCijenaRezervacije.setText(Double.toString(trenutniObjekat.getCijena_rezervacije()));
         lblBrojMjesta.setText(Integer.toString(trenutniObjekat.getBroj_mjesta()));
         lblBrojStolova.setText(Integer.toString(trenutniObjekat.getBroj_stolova()));
-        tfBrojGostiju.setUserData("");
         taGosti.setPromptText("Unesite imena gostiju jedne ispod drugih...");
         setStolovi();
         setMeniji();
@@ -270,7 +268,7 @@ public class IzmjeniRezervacijuController {
         }
     }
 
-    private List<Raspored> getRasporedi() {
+    private void getRasporedi() {
         rasporedi = new ArrayList<>();
         for (Raspored raspored : Raspored.getSviRasporedi()) {
             if (raspored.getProslava().getId() == trenutnaProslava.getId()) {

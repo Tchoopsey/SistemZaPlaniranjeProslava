@@ -8,15 +8,13 @@ import com.dao.RasporedDAO;
 
 public class Raspored {
 
-    private int id;
     private Sto sto;
     private Proslava proslava;
     private List<String> gosti;
 
     private static List<Raspored> sviRasporedi = new ArrayList<>();
 
-    public Raspored(int id, Sto sto, Proslava proslava, List<String> gosti) {
-        this.id = id;
+    public Raspored(Sto sto, Proslava proslava, List<String> gosti) {
         this.sto = sto;
         this.proslava = proslava;
         this.gosti = gosti;
@@ -27,14 +25,6 @@ public class Raspored {
 
     public Proslava getProslava() {
         return proslava;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public Sto getSto() {
@@ -72,7 +62,7 @@ public class Raspored {
     }
 
     public static String gostiFromList(List<String> list) {
-        String gosti = String.join(", ", list);
+        String gosti = String.join(",", list);
 
         return gosti;
     }
@@ -86,21 +76,17 @@ public class Raspored {
         sviRasporedi.add(raspored);
     }
 
-    public static void updateRasporedList(Raspored raspored, int id) {
+    public static void updateRasporedList(Raspored raspored, int idSto) {
         for (int i = 0; i < sviRasporedi.size(); i++) {
-            if (sviRasporedi.get(i).getId() == id) {
+            if (sviRasporedi.get(i).getSto().getId() == idSto) {
                 sviRasporedi.set(i, raspored);
                 break;
             }
         }
     }
 
-    public static void removeRasporedFromList(int id) {
-        for (Raspored raspored : sviRasporedi) {
-            if (raspored.getId() == id) {
-                Raspored.sviRasporedi.remove(raspored);
-            }
-        }
+    public static void removeRasporedFromList(int idProslava) {
+        sviRasporedi.removeIf(r -> r.getProslava().getId() == idProslava);
     }
 
 }

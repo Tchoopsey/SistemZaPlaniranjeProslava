@@ -30,11 +30,11 @@
          </children>
       </GridPane>
       <Button fx:id="btnLogout" layoutX="696.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleLogout" text="Logout" />
-      <ListView fx:id="lvObjekti" layoutX="15.0" layoutY="272.0" prefHeight="239.0" prefWidth="314.0" />
-      <GridPane layoutX="14.0" layoutY="97.0" prefHeight="150.0" prefWidth="314.0">
+      <ListView fx:id="lvObjekti" layoutX="15.0" layoutY="272.0" prefHeight="239.0" prefWidth="344.0" />
+      <GridPane layoutX="14.0" layoutY="97.0" prefHeight="150.0" prefWidth="359.0">
         <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="129.0" minWidth="10.0" prefWidth="93.0" />
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="179.0" minWidth="10.0" prefWidth="179.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="167.0" minWidth="10.0" prefWidth="167.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="179.0" minWidth="10.0" prefWidth="141.0" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -48,14 +48,14 @@
             <Label prefHeight="18.0" prefWidth="85.0" text="Datum:" GridPane.rowIndex="2" />
             <Label prefHeight="18.0" prefWidth="85.0" text="Grad:" GridPane.rowIndex="3" />
             <TextField fx:id="tfBrojMjesta" prefHeight="26.0" prefWidth="173.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <TextField fx:id="tfDatum" prefHeight="26.0" prefWidth="233.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <TextField fx:id="tfGrad" prefHeight="26.0" prefWidth="110.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <TextField fx:id="tfDatum" prefHeight="26.0" prefWidth="149.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <TextField fx:id="tfGrad" prefHeight="26.0" prefWidth="202.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
          </children>
       </GridPane>
       <Button fx:id="btnDodajRezervaciju" layoutX="14.0" layoutY="523.0" mnemonicParsing="false" onAction="#handleDodajRezervaciju" text="Dodaj rezervaciju" />
-      <ListView fx:id="lvProslave" layoutX="445.0" layoutY="272.0" prefHeight="239.0" prefWidth="314.0" />
+      <ListView fx:id="lvProslave" layoutX="415.0" layoutY="410.0" prefHeight="101.0" prefWidth="344.0" />
       <Button fx:id="btnIzmjeniRezervaciju" layoutX="624.0" layoutY="523.0" mnemonicParsing="false" onAction="#handleIzmjeniRezervaciju" text="Izmjeni rezervaciju" />
-      <GridPane layoutX="445.0" layoutY="232.0" prefHeight="30.0" prefWidth="314.0">
+      <GridPane layoutX="414.0" layoutY="380.0" prefHeight="30.0" prefWidth="314.0">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -65,6 +65,33 @@
         </rowConstraints>
          <children>
             <Label text="Trenutne rezervacije:" />
+         </children>
+      </GridPane>
+      <Button fx:id="btnIzmjeniRezervaciju1" layoutX="415.0" layoutY="523.0" mnemonicParsing="false" onAction="#handleOtkaziRezervaciju" text="Otkazi rezervaciju" />
+      <GridPane layoutX="414.0" layoutY="99.0" prefHeight="30.0" prefWidth="314.0">
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <children>
+            <Label text="Otkazane rezervacije:" />
+         </children>
+      </GridPane>
+      <ListView fx:id="lvOtkazaneProslave" layoutX="415.0" layoutY="129.0" prefHeight="101.0" prefWidth="344.0" />
+      <ListView fx:id="lvProtekleProslave" layoutX="414.0" layoutY="272.0" prefHeight="101.0" prefWidth="344.0" />
+      <GridPane layoutX="414.0" layoutY="242.0" prefHeight="30.0" prefWidth="314.0">
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <children>
+            <Label text="Protekle rezervacije:" />
          </children>
       </GridPane>
    </children>

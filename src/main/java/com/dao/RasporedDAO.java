@@ -23,13 +23,11 @@ public class RasporedDAO {
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                int id = rs.getInt("id");
-                int sto_id = rs.getInt("Sto_id");
-                int proslava_id = rs.getInt("Proslava_id");
+                int sto_id = rs.getInt("idSto");
+                int proslava_id = rs.getInt("idProslava");
                 String gosti = rs.getString("gosti");
 
                 rasporedi.add(new Raspored(
-                    id,
                     Sto.getById(sto_id),
                     Proslava.getById(proslava_id),
                     Raspored.gostiFromString(gosti)
@@ -46,7 +44,7 @@ public class RasporedDAO {
     public boolean createRaspored(Raspored raspored) {
 
         String sql = "INSERT INTO " 
-            + "Raspored (Sto_id, Proslava_id, gosti  VALUES (?, ?, ?)";
+            + "Raspored (idSto, idProslava, gosti)  VALUES (?, ?, ?)";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -59,11 +57,6 @@ public class RasporedDAO {
                 throw new SQLException("Creating Raspored was unsuccessful!!!");
             }
 
-            try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) {
-                    raspored.setId(rs.getInt(1));
-                }
-            }
             Raspored.addRasporedToList(raspored);
             System.out.println("Creating Raspored...");
 
@@ -75,14 +68,14 @@ public class RasporedDAO {
         }
     }
 
-    public boolean removeRaspored(int id) {
-        String sql = "DELETE FROM Raspored WHERE id = ?";
+    public boolean removeRaspored(int idProslava) {
+        String sql = "DELETE FROM Raspored WHERE idProslava = ?";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, id);
+            ps.setInt(1, idProslava);
 
-            Raspored.removeRasporedFromList(id);
+            Raspored.removeRasporedFromList(idProslava);
 
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
@@ -92,18 +85,18 @@ public class RasporedDAO {
         }
     }
 
-    public boolean updateRaspored(Raspored raspored, int id) {
-        String sql = "UPDATE Raspored SET Sto_id = ?, Proslava_id = ?," 
-            + " gosti WHERE naziv = ?";
+    public boolean updateRaspored(Raspored raspored, int idSto) {
+        String sql = "UPDATE Raspored SET idSto = ?, idProslava = ?," 
+            + " gosti = ? WHERE idSto = ?";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, raspored.getSto().getId());
             ps.setInt(2, raspored.getProslava().getId());
             ps.setString(3, Raspored.gostiFromList(raspored.getGosti()));
-            ps.setInt(4, id);
+            ps.setInt(4, idSto);
 
-            Raspored.updateRasporedList(raspored, id);
+            Raspored.updateRasporedList(raspored, idSto);
 
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
@@ -112,26 +105,4 @@ public class RasporedDAO {
             return false;
         }
     }
-    
-    public static Raspored getById(int id) throws SQLException {
-        String sql = "SELECT * FROM Raspored WHERE id = ?";
-
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    Raspored raspored = new Raspored();
-                    raspored.setSto(StoDAO.getById(rs.getInt("Sto_id")));
-                    raspored.setProslava(ProslavaDAO.getById(rs.getInt("Proslava_id")));
-                    raspored.setGosti(Raspored.gostiFromString(rs.getString("gosti")));
-                    
-                    return raspored;
-                }
-            }        
-        } 
-
-        return null;
-    }
-    
 }

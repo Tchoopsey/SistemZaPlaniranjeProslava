@@ -76,8 +76,9 @@ public class SceneManager {
         mainStage.show();
     }
 
-    public static void showObjekatScene(Vlasnik vlasnik) throws IOException {
+    public static void showObjekatScene(Vlasnik vlasnik, Objekat objekat) throws IOException {
         trenutniKorisnik = vlasnik;
+        trenutniObjekat = objekat;
         FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource("/views/ObjekatScene.fxml"));
         Scene scene = new Scene(loader.load());
         mainStage.setScene(scene);

@@ -73,11 +73,7 @@ public class Sto {
     }
 
     public static void removeStoFromList(int id) {
-        for (Sto raspored : sviStolovi) {
-            if (raspored.getId() == id) {
-                Sto.sviStolovi.remove(raspored);
-            }
-        }
+        sviStolovi.removeIf(s -> s.getId() == id);
     }
 
     public static Sto getById(int sto_id) {
@@ -89,9 +85,4 @@ public class Sto {
 
         return null;
     }
-
-    // @Override
-    // public String toString() {
-    //     return "Sto ";
-    // }
 }

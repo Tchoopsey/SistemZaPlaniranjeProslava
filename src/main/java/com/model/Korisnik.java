@@ -50,17 +50,13 @@ public class Korisnik {
     public static String checkKorisnicko_ime(String user) {
         for (Korisnik korisnik : korisnici) {
             if (korisnik.getKorisnicko_ime().equals(user)) {
-                System.out.println(korisnik.getKorisnicko_ime());
                 if (korisnik instanceof Admin) {
-                    System.out.println("admin");
                     return "Admin";
                 }
                 if (korisnik instanceof Vlasnik) {
-                    System.out.println("vlasnik");
                     return "Vlasnik";
                 }
                 if (korisnik instanceof Klijent) {
-                    System.out.println("klijent");
                     return "Klijent";
                 }
             }
