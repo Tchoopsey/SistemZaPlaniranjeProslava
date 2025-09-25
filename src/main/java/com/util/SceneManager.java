@@ -55,6 +55,7 @@ public class SceneManager {
     public static void showLoginScene() throws IOException {
         FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource("/views/LoginScene.fxml"));
         Scene scene = new Scene(loader.load());
+        scene.getStylesheets().add(SceneManager.class.getResource("/style.css").toExternalForm());
         mainStage.setScene(scene);
         mainStage.setResizable(false);
         mainStage.show();
@@ -63,6 +64,7 @@ public class SceneManager {
     public static void showSignUpScene() throws IOException {
         FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource("/views/SignUpScene.fxml"));
         Scene scene = new Scene(loader.load());
+        scene.getStylesheets().add(SceneManager.class.getResource("/style.css").toExternalForm());
         mainStage.setScene(scene);
         mainStage.setResizable(false);
         mainStage.show();
@@ -72,6 +74,7 @@ public class SceneManager {
         trenutniKorisnik = vlasnik;
         FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource("/views/VlasnikScene.fxml"));
         Scene scene = new Scene(loader.load());
+        scene.getStylesheets().add(SceneManager.class.getResource("/style.css").toExternalForm());
         mainStage.setScene(scene);
         mainStage.show();
     }
@@ -81,6 +84,7 @@ public class SceneManager {
         trenutniObjekat = objekat;
         FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource("/views/ObjekatScene.fxml"));
         Scene scene = new Scene(loader.load());
+        scene.getStylesheets().add(SceneManager.class.getResource("/style.css").toExternalForm());
         mainStage.setScene(scene);
         mainStage.show();
     }
@@ -89,6 +93,7 @@ public class SceneManager {
         trenutniKorisnik = admin;
         FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource("/views/AdminScene.fxml"));
         Scene scene = new Scene(loader.load());
+        scene.getStylesheets().add(SceneManager.class.getResource("/style.css").toExternalForm());
         mainStage.setScene(scene);
         mainStage.setResizable(false);
         mainStage.show();
@@ -98,6 +103,7 @@ public class SceneManager {
         trenutniKorisnik = admin;
         FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource("/views/CreateAdminScene.fxml"));
         Scene scene = new Scene(loader.load());
+        scene.getStylesheets().add(SceneManager.class.getResource("/style.css").toExternalForm());
         mainStage.setScene(scene);
         mainStage.setResizable(false);
         mainStage.show();
@@ -108,6 +114,7 @@ public class SceneManager {
         trenutniKorisnik = klijent;
         FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource("/views/KlijentScene.fxml"));
         Scene scene = new Scene(loader.load());
+        scene.getStylesheets().add(SceneManager.class.getResource("/style.css").toExternalForm());
         mainStage.setScene(scene);
         mainStage.setResizable(false);
         mainStage.show();
@@ -118,6 +125,7 @@ public class SceneManager {
         trenutniKorisnik = klijent;
         FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource("/views/NovaRezervacijaScene.fxml"));
         Scene scene = new Scene(loader.load());
+        scene.getStylesheets().add(SceneManager.class.getResource("/style.css").toExternalForm());
         mainStage.setScene(scene);
         mainStage.setResizable(false);
         mainStage.show();
@@ -128,6 +136,7 @@ public class SceneManager {
         trenutniKorisnik = klijent;
         FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource("/views/IzmjeniRezervacijuScene.fxml"));
         Scene scene = new Scene(loader.load());
+        scene.getStylesheets().add(SceneManager.class.getResource("/style.css").toExternalForm());
         mainStage.setScene(scene);
         mainStage.setResizable(false);
         mainStage.show();

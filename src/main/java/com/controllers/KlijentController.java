@@ -67,8 +67,9 @@ public class KlijentController {
     public void handleOtkaziRezervaciju() {
         Proslava proslava = lvProslave.getSelectionModel().getSelectedItem();
         Objekat objekat = proslava.getObjekat();
+        LocalDate limit = proslava.getDatum().minusDays(3);
 
-        if (LocalDate.now().equals(proslava.getDatum().minusDays(3))) {
+        if (!LocalDate.now().isBefore(limit)) {
             Alert alert = new Alert(AlertType.WARNING, "Proslavu mozete otkazati najkasnije 3 dana prije proslave!");
             alert.showAndWait();
             return;

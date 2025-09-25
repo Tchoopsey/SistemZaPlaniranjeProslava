@@ -107,23 +107,4 @@ public class StoDAO {
         }
     }
     
-    public static Sto getById(int id) throws SQLException {
-        String sql = "SELECT * FROM Sto WHERE id = ?";
-
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    Sto sto = new Sto();
-                    sto.setObjekat(ObjekatDAO.getById(rs.getInt("Objekat_id")));
-                    sto.setBroj_mjesta(rs.getInt("broj_mjesta"));
-                    
-                    return sto;
-                }
-            }        
-        } 
-
-        return null;
-    }
 }

@@ -68,11 +68,13 @@ public class SignUpController {
         if (!password.equals(pw_confirm)) {
             System.err.println("Kreiranje korisnika neuspjesno!");
             lblPotvrdaError.setText("Lozinke se ne poklapaju!");
+            uslov = false;
         }
         
         if (Korisnik.isPresent(korisnicko_ime)) {
             System.err.println("Kreiranje korisnika neuspjesno!");
             lblKorisnickoImeError.setText("Korisnicko ime je zauzeto");
+            uslov = false;
         }
 
         if (ime == "") {
