@@ -110,7 +110,6 @@ public class KlijentController {
                 return;
             } 
         }
-
     }
 
     private void dodajNovacKlijentu(double uplacen_iznos) {
@@ -150,7 +149,6 @@ public class KlijentController {
             e.printStackTrace();
         }
     }
-
 
     private void setAllUserData() {
         trenutniKlijent = (Klijent) SceneManager.getKorisnik();

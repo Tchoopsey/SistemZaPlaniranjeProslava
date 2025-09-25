@@ -15,7 +15,9 @@ import com.model.Objekat;
 import com.model.Proslava;
 import com.model.Raspored;
 import com.model.Sto;
+import com.util.MeniWrapper;
 import com.util.SceneManager;
+import com.util.StoWrapper;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -277,53 +279,4 @@ public class IzmjeniRezervacijuController {
         }
     }
 
-}
-
-class StoWrapper {
-    private int id;
-    private Sto sto;
-
-    public StoWrapper(int id, Sto sto) {
-        this.id = id;
-        this.sto = sto;
-    }
-
-    @Override
-    public String toString() {
-        return "Sto " + id + ": " + sto.getBroj_mjesta() + " mjesta";
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public Sto getSto() {
-        return sto;
-    }
-
-}
-
-class MeniWrapper {
-    int id;
-    Meni meni;
-
-    public MeniWrapper(int id, Meni meni) {
-        this.id = id;
-        this.meni = meni;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public Meni getMeni() {
-        return meni;
-    }
-
-    @Override
-    public String toString() {
-        return "Meni " + id + "\n"
-            + meni.getCijena_po_osobi() + "KM po osobi\n"
-            + meni.getOpis();
-    }
 }
