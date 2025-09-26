@@ -104,15 +104,15 @@ public class VlasnikDAO {
     }
 
     public boolean updateVlasnik(Vlasnik vlasnik, String jmbg) {
-        String sql = "UPDATE Vlasnik SET ime = ?, prezime = ?, jmbg = ?"
+        String sql = "UPDATE Vlasnik SET ime = ?, prezime = ?, jmbg = ?,"
             + " korisnicko_ime = ?, lozinka = ?, broj_telefona = ? WHERE jmbg = ?";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, vlasnik.getIme());
             ps.setString(2, vlasnik.getPrezime());
-            ps.setString(3, vlasnik.getKorisnicko_ime());
-            ps.setString(4, vlasnik.getJmbg());
+            ps.setString(3, vlasnik.getJmbg());
+            ps.setString(4, vlasnik.getKorisnicko_ime());
             ps.setString(5, vlasnik.getPassword());
             ps.setString(6, vlasnik.getBroj_telefona());
             ps.setString(7, jmbg);
@@ -125,31 +125,6 @@ public class VlasnikDAO {
             System.err.println("Updating Vlasnik user was unsuccessful!!!");
             return false;
         }
-    }
-
-    public static Vlasnik getById(int id) throws SQLException {
-        String sql = "SELECT * FROM Vlasnik WHERE id = ?";
-
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    Vlasnik vlasnik = new Vlasnik();
-                    vlasnik.setIme(rs.getString("ime"));
-                    vlasnik.setPrezime(rs.getString("prezime"));
-                    vlasnik.setJmbg(rs.getString("jmbg"));
-                    vlasnik.setKorisnicko_ime(rs.getString("korisnicko_ime"));
-                    vlasnik.setBroj_racuna(rs.getString("broj_racuna"));
-                    vlasnik.setPassword(rs.getString("lozinka"));
-                    vlasnik.setBroj_telefona(rs.getString("broj_telefona"));
-
-                    return vlasnik;
-                }
-            }        
-        } 
-
-        return null;
     }
 
 }

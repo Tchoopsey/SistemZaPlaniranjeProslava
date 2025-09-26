@@ -106,8 +106,8 @@ public class KlijentDAO {
     }
 
     public boolean updateKlijent(Klijent klijent, String jmbg) {
-        String sql = "UPDATE Klijent SET ime = ?, prezime = ?, jmbg = ?"
-            + ", broj_racuna = ?, korisnicko_ime = ?, lozinka = ? WHERE jmbg = ?";
+        String sql = "UPDATE Klijent SET ime = ?, prezime = ?, jmbg = ?,"
+            + " broj_racuna = ?, korisnicko_ime = ?, lozinka = ? WHERE jmbg = ?";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -117,8 +117,7 @@ public class KlijentDAO {
             ps.setString(4, klijent.getBroj_racuna());
             ps.setString(5, klijent.getKorisnicko_ime());
             ps.setString(6, klijent.getPassword());
-            ps.setString(7, klijent.getBroj_telefona());
-            ps.setString(8, jmbg);
+            ps.setString(7, jmbg);
 
             Klijent.updateKlijentsList(klijent, jmbg);
 
