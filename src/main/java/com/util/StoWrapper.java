@@ -24,5 +24,13 @@ public class StoWrapper {
         return sto;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setSto(Sto sto) {
+        this.sto = sto;
+    }
+
 }
 

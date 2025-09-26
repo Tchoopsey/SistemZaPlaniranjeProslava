@@ -51,8 +51,6 @@ public class VlasnikController {
 
     @FXML
     private void initialize() {
-        trenutniVlasnik = (Vlasnik) SceneManager.getKorisnik();
-        getObjekti();
         setAllUserData();
     }
 
@@ -88,7 +86,6 @@ public class VlasnikController {
         setFormat();
         setZauzetiDatumi();
 
-        System.out.println(selected.getZarada());
         String taText = "Naziv: " +  selected.getNaziv() + "\n"
             + "Grad: " +  selected.getGrad() + "\n"
             + "Adresa: " +  selected.getAdresa() + "\n"
@@ -102,14 +99,16 @@ public class VlasnikController {
     }
 
     private void setAllUserData() {
+        trenutniVlasnik = (Vlasnik) SceneManager.getKorisnik();
         lblIme.setText(trenutniVlasnik.getIme());
         lblPrezime.setText(trenutniVlasnik.getPrezime());
         lblKorisnickoIme.setText(trenutniVlasnik.getKorisnicko_ime());
         BankovniRacun racun = BankovniRacun.getByBrojRacuna(trenutniVlasnik.getBroj_racuna());
         lblStanje.setText(Double.toString(racun.getStanje()));
         taObjekat.setEditable(false);
+        getObjekti();
         Objekat objekat = checkObavjestenja();
-        if (obavjestenje != null) {
+        if (objekat != null) {
             Platform.runLater(() -> rjesiOdbijanje(objekat));
         }
     }
@@ -123,11 +122,15 @@ public class VlasnikController {
         alert.getButtonTypes().setAll(fix, obrisi);
         MeniDAO meniDAO = new MeniDAO();
         for (Meni meni : new ArrayList<>(Meni.getSviMeniji())) {
-            meniDAO.removeMeni(meni.getId());
+            if (meni.getObjekat().getId() == objekat.getId()) {
+                meniDAO.removeMeni(meni.getId());
+            }
         }
         StoDAO stoDAO = new StoDAO();
         for (Sto sto : new ArrayList<>(Sto.getSviStolovi())) {
-            stoDAO.removeSto(sto.getId());
+            if (sto.getObjekat().getId() == objekat.getId()) {
+                stoDAO.removeSto(sto.getId());
+            }
         }
 
         alert.showAndWait().ifPresent(res -> {
@@ -219,7 +222,6 @@ public class VlasnikController {
 
     private void getObjekti() {
         for (Objekat objekat : Objekat.getSviObjekti()) {
-            System.out.println(objekat.getZarada());
             if (trenutniVlasnik.getId() == objekat.getVlasnik().getId()) {
                 cbObjekti.getItems().add(objekat);
             }

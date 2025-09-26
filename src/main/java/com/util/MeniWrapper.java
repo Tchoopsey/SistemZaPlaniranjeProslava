@@ -15,8 +15,17 @@ public class MeniWrapper {
         return id;
     }
 
+
     public Meni getMeni() {
         return meni;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setMeni(Meni meni) {
+        this.meni = meni;
     }
 
     @Override

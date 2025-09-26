@@ -15,12 +15,13 @@ import com.model.Objekat;
 import com.model.StanjeObjekta;
 import com.model.Sto;
 import com.model.Vlasnik;
+import com.util.MeniWrapper;
 import com.util.SceneManager;
+import com.util.StoWrapper;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
@@ -32,8 +33,8 @@ public class ObjekatController {
     private static Objekat trenutniObjekat;
 
     private static int ukupanBrojMjesta = 0;
-    private static List<String> stolovi = new ArrayList<>();
-    private static List<String> meniji  = new ArrayList<>();
+    private static List<StoWrapper> stolovi = new ArrayList<>();
+    private static List<MeniWrapper> meniji  = new ArrayList<>();
 
     @FXML Label lblIme;
     @FXML Label lblPrezime;
@@ -48,14 +49,8 @@ public class ObjekatController {
     @FXML TextField tfStoBrojMjesta;
     @FXML TextField tfCijenaMenija;
     @FXML TextArea  taOpisMenija;
-    @FXML ListView<String> lvStolovi;
-    @FXML ListView<String> lvMeniji;
-    @FXML Button btnDodajSto;
-    @FXML Button btnIzbaciSto;
-    @FXML Button btnDodajMeni;
-    @FXML Button btnIzbaciMeni;
-    @FXML Button btnDodajObjekat;
-    @FXML Button btnNazad;
+    @FXML ListView<StoWrapper> lvStolovi;
+    @FXML ListView<MeniWrapper> lvMeniji;
 
     @FXML
     private void initialize() {
@@ -75,8 +70,10 @@ public class ObjekatController {
             tfStoBrojMjesta.setText("");
             return;
         }
+
+        StoWrapper sto = new StoWrapper(
+            stolovi.size() + 1, new Sto(0, trenutniObjekat, brojMjesta));
         
-        String sto = "Sto " + (stolovi.size() + 1) + ": " + brojMjesta;
         stolovi.add(sto);
         refreshStolovi();
     }
@@ -94,22 +91,21 @@ public class ObjekatController {
         lvStolovi.getItems().clear();
         ukupanBrojMjesta = 0;
         for (int i = 0; i < stolovi.size(); i++) {
-            String[] dijelovi = stolovi.get(i).split(":");
-            int brojMjesta = Integer.parseInt(dijelovi[1].trim());
-            lvStolovi.getItems().add("Sto " + (i + 1) + " : " + brojMjesta);
-            ukupanBrojMjesta += brojMjesta;
+            StoWrapper sto = stolovi.get(i);
+            sto.setId(i+1);
+            lvStolovi.getItems().add(sto);
+            ukupanBrojMjesta += sto.getSto().getBroj_mjesta();
         }
     }
 
     @FXML
     private void handleDodajMeni() {
-        int cijenaMenija;
+        double cijenaMenija;
         try {
-            cijenaMenija = Integer.parseInt(tfCijenaMenija.getText());
+            cijenaMenija = Double.parseDouble(tfCijenaMenija.getText());
         } catch (NumberFormatException e) {
-            System.err.println("Unesena vrijendnost nije cijeli broj!");
+            System.err.println("Unesena vrijendnost nije broj!");
             tfCijenaMenija.setText("");
-            taOpisMenija.clear();
             return;
         }
         String opisMenija = taOpisMenija.getText();
@@ -118,8 +114,8 @@ public class ObjekatController {
             return;
         }
 
-        String meni = "Meni " + (meniji.size() + 1) + ": " + cijenaMenija + 
-            ": \n" + opisMenija;
+        Meni m = new Meni(0, trenutniObjekat, opisMenija, cijenaMenija);
+        MeniWrapper meni = new MeniWrapper(meniji.size() + 1, m);
         meniji.add(meni);
         taOpisMenija.clear();
         refreshMeniji();
@@ -137,17 +133,18 @@ public class ObjekatController {
     private void refreshMeniji() {
         lvMeniji.getItems().clear();
         for (int i = 0; i < meniji.size(); i++) {
-            String[] dijelovi = meniji.get(i).split(":");
-            int cijenaMenija = Integer.parseInt(dijelovi[1].trim());
-            String opisMenija = dijelovi[2].trim();
-            lvMeniji.getItems().add("Meni " + (i + 1) + " : " + cijenaMenija +
-                ": \n" + opisMenija);
+            MeniWrapper mw = meniji.get(i);
+            mw.setId(i+1);
+            lvMeniji.getItems().add(mw);
         }
     }
 
     @FXML
     private void handleNazad() {
         try {
+            meniji = null;
+            stolovi = null;
+            trenutniObjekat = null;
             SceneManager.showVlasnikScene(trenutniVlasnik);
         } catch (IOException e) {
             e.printStackTrace();
@@ -215,20 +212,26 @@ public class ObjekatController {
         dao.createObjekat(o);
 
         StoDAO stoDAO = new StoDAO();
-        for (String sto : stolovi) {
-            String[] dijelovi = sto.split(":");
-            Sto s = new Sto(0, o, Integer.parseInt(dijelovi[1].trim()));
-            stoDAO.createSto(s);
+        for (StoWrapper sto : stolovi) {
+            sto.getSto().setObjekat(o);
+            stoDAO.createSto(sto.getSto());
         }
+        stolovi = null;
 
         MeniDAO meniDAO = new MeniDAO();
-        for (String meni : meniji) {
-            String[] dijelovi = meni.split(":");
-            Meni m = new Meni(0, o, dijelovi[2].trim(), Double.parseDouble(dijelovi[1].trim()));
-            meniDAO.createMeni(m);
+        for (MeniWrapper meni : meniji) {
+            meni.getMeni().setObjekat(o);
+            meniDAO.createMeni(meni.getMeni());
+        }
+        meniji = null;
+        clearInput();
+
+        try {
+            SceneManager.showVlasnikScene(trenutniVlasnik);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-        clearInput();
     }
 
     private void setAllUserData() {
@@ -253,7 +256,8 @@ public class ObjekatController {
         tfCijenaMenija.setUserData("");
         taOpisMenija.clear();
         taOpisMenija.setWrapText(true);
-
+        stolovi = new ArrayList<>();
+        meniji = new ArrayList<>();
     }
 
     private void fixObjekat() {
@@ -279,5 +283,7 @@ public class ObjekatController {
         tfCijenaMenija.clear();
         tfStoBrojMjesta.clear();
         taOpisMenija.clear();
+        lvMeniji.getItems().clear();
+        lvStolovi.getItems().clear();
     }
 }
