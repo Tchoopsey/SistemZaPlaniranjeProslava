@@ -3,6 +3,8 @@ package com.controllers;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.dao.BankovniRacunDAO;
 import com.dao.ObjekatDAO;
@@ -12,6 +14,7 @@ import com.model.BankovniRacun;
 import com.model.Klijent;
 import com.model.Meni;
 import com.model.Objekat;
+import com.model.Osoba;
 import com.model.Proslava;
 import com.model.Raspored;
 import com.model.Sto;
@@ -22,9 +25,13 @@ import com.util.StoWrapper;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.VBox;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 
 public class IzmjeniRezervacijuController {
 
@@ -70,8 +77,35 @@ public class IzmjeniRezervacijuController {
     }
 
     @FXML
+    private void handlePrintajRaspored() {
+        try {
+            SceneManager.showPrintajRasporedScene(trenutniKlijent, trenutnaProslava);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
     private void handleDodajRezervaciju() {
         Alert alert = new Alert(AlertType.WARNING);
+
+        Optional<String> res = unesiLozinku();
+
+        if (res.isEmpty() || res.get().trim().isEmpty()) {
+            alert.setTitle("Greska!");
+            alert.setContentText("Unesite lozinku!");
+            alert.setContentText("Morate unijeti lozinku da biste potvrdili rezervaciju!!!");
+            alert.showAndWait();
+            return;
+        }
+
+        if (!res.get().trim().equals(trenutniKlijent.getPassword())) {
+            alert.setTitle("Greska!");
+            alert.setContentText("Pogresna lozinka!");
+            alert.setContentText("Morate unijeti ispravnu lozinku da biste potvrdili rezervaciju!!!");
+            alert.showAndWait();
+            return;
+        }
 
         int broj_gostiju = 0;
         for (Raspored raspored : rasporedi) {
@@ -112,12 +146,38 @@ public class IzmjeniRezervacijuController {
             rasporedDAO.createRaspored(raspored);
         }
 
+        unesiLozinku();
+
         oduzmiNovacKlijentu(ostatak_uplate);
         dodajNovacVlasniku(ostatak_uplate);
 
         setAllUserData();
 
         taGosti.clear();
+    }
+
+    private Optional<String> unesiLozinku() {
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("Potvrda Rezervacije");
+        dialog.setHeaderText("Potvrdite rezervaciju lozinkom!");
+        dialog.setContentText("Lozinka: ");
+
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        PasswordField pfLozinka = new PasswordField();
+
+        VBox vBox = new VBox(10);
+        vBox.getChildren().add(pfLozinka);
+        dialog.getDialogPane().setContent(vBox);
+
+        dialog.setResultConverter(button -> {
+            if (button == ButtonType.OK) {
+                return pfLozinka.getText();
+            }
+            return null;
+        });
+
+        return dialog.showAndWait();
     }
 
     private void dodajNovacVlasniku(double uplacen_iznos) {
@@ -160,7 +220,9 @@ public class IzmjeniRezervacijuController {
             .findFirst()
             .ifPresentOrElse(
                 raspored -> {
-                    String gosti = String.join("\n", raspored.getGosti());
+                    String gosti = raspored.getGosti().stream()
+                        .map(Osoba::toString)
+                        .collect(Collectors.joining("\n"));
                     taGosti.setText(gosti);
                 }, 
                 () -> taGosti.clear()
@@ -169,7 +231,7 @@ public class IzmjeniRezervacijuController {
 
     @FXML
     private void handleDodajRaspored() {
-        List<String> gosti = new ArrayList<>();
+        List<Osoba> gosti = new ArrayList<>();
         StoWrapper selectedSto = cbSto.getValue();
         Alert alert = new Alert(AlertType.WARNING);
 
@@ -183,7 +245,8 @@ public class IzmjeniRezervacijuController {
             }
 
             for (String gost : temp) {
-                gosti.add(gost.trim());
+                String[] osoba = gost.split(" ");
+                gosti.add(new Osoba(osoba[0], osoba[1]));
             }
         }
 
@@ -204,7 +267,7 @@ public class IzmjeniRezervacijuController {
 
     @FXML
     private void handleIzmjeniRaspored() {
-        List<String> gosti = new ArrayList<>();
+        List<Osoba> gosti = new ArrayList<>();
         StoWrapper selectedSto = cbSto.getValue();
         Alert alert = new Alert(AlertType.WARNING);
 
@@ -217,7 +280,8 @@ public class IzmjeniRezervacijuController {
             }
 
             for (String gost : temp) {
-                gosti.add(gost.trim());
+                String[] osoba = gost.split(" ");
+                gosti.add(new Osoba(osoba[0], osoba[1]));
             }
         }
 

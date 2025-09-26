@@ -34,6 +34,8 @@
             <TextField id="tfIme" fx:id="tfIme" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
             <TextField id="tfPrezime" fx:id="tfPrezime" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
             <TextField id="tfKorisnickoIme" fx:id="tfKorisnickoIme" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+            <PasswordField fx:id="pfLozinka" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <PasswordField fx:id="pfPotvrda" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <Button id="btnKreiraj" fx:id="btnKreiraj" mnemonicParsing="false" onAction="#handleSignUp" text="Kreiraj" GridPane.rowIndex="5" GridPane.valignment="BOTTOM" />
             <Button id="btnOtkazi" fx:id="btnOtkazi" mnemonicParsing="false" onAction="#handleOtkazi" text="Otkazi" GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.valignment="BOTTOM" />
             <Label fx:id="lblImeError" prefHeight="18.0" prefWidth="206.0" textFill="#e80c0c" GridPane.columnIndex="2" />
@@ -41,8 +43,6 @@
             <Label fx:id="lblKorisnickoImeError" prefHeight="18.0" prefWidth="203.0" textFill="#e80c0c" GridPane.columnIndex="2" GridPane.rowIndex="2" />
             <Label fx:id="lblLozinkaError" prefHeight="18.0" prefWidth="209.0" textFill="#e80c0c" GridPane.columnIndex="2" GridPane.rowIndex="3" />
             <Label fx:id="lblPotvrdaError" prefHeight="18.0" prefWidth="208.0" textFill="#e80c0c" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-            <PasswordField fx:id="pfLozinka" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <PasswordField fx:id="pfPotvrda" GridPane.columnIndex="1" GridPane.rowIndex="4" />
          </children>
       </GridPane>
    </children>

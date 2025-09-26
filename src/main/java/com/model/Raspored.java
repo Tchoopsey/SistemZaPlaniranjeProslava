@@ -10,11 +10,11 @@ public class Raspored {
 
     private Sto sto;
     private Proslava proslava;
-    private List<String> gosti;
+    private List<Osoba> gosti;
 
     private static List<Raspored> sviRasporedi = new ArrayList<>();
 
-    public Raspored(Sto sto, Proslava proslava, List<String> gosti) {
+    public Raspored(Sto sto, Proslava proslava, List<Osoba> gosti) {
         this.sto = sto;
         this.proslava = proslava;
         this.gosti = gosti;
@@ -39,11 +39,11 @@ public class Raspored {
         this.proslava = proslava;
     }
 
-    public List<String> getGosti() {
+    public List<Osoba> getGosti() {
         return gosti;
     }
 
-    public void setGosti(List<String> gosti) {
+    public void setGosti(List<Osoba> gosti) {
         this.gosti = gosti;
     }
 
@@ -55,16 +55,32 @@ public class Raspored {
         Raspored.sviRasporedi = sviRasporedi;
     }
 
-    public static List<String> gostiFromString(String string) {
-        List<String> gosti = new ArrayList<>(Arrays.asList(string.split(",")));
+    public static List<Osoba> gostiFromString(String string) {
+        List<Osoba> gosti = Arrays.stream(string.split(","))
+            .map(s -> {
+                String[] parts = s.trim().split(" ", 2);
+                return new Osoba(parts[0], parts[1]);
+        })
+        .toList();
 
         return gosti;
     }
 
-    public static String gostiFromList(List<String> list) {
-        String gosti = String.join(",", list);
+    public static String gostiFromList(List<Osoba> list) {
+        String gosti = String.join(",", list.stream()
+            .map(Osoba::toString)
+            .toList());
 
         return gosti;
+    }
+
+    public static Raspored getByStoId(int idSto) {
+        for (Raspored raspored : sviRasporedi) {
+            if (raspored.getSto().getId() == idSto) {
+                return raspored;
+            }
+        }
+        return null;
     }
 
     public static void createRasporedList() {

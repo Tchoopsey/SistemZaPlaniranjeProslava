@@ -15,6 +15,7 @@ import com.model.Objekat;
 import com.model.Proslava;
 import com.model.Raspored;
 import com.model.StanjeObjekta;
+import com.util.KomparatorObjekata;
 import com.util.SceneManager;
 
 import javafx.beans.value.ChangeListener;
@@ -70,7 +71,8 @@ public class KlijentController {
         LocalDate limit = proslava.getDatum().minusDays(3);
 
         if (!LocalDate.now().isBefore(limit)) {
-            Alert alert = new Alert(AlertType.WARNING, "Proslavu mozete otkazati najkasnije 3 dana prije proslave!");
+            Alert alert = new Alert(AlertType.WARNING, 
+                "Proslavu mozete otkazati najkasnije 3 dana prije proslave!");
             alert.showAndWait();
             return;
         }
@@ -83,7 +85,9 @@ public class KlijentController {
 
         RasporedDAO rasporedDAO = new RasporedDAO();
         for (Raspored raspored : new ArrayList<>(Raspored.getSviRasporedi())) {
-            rasporedDAO.removeRaspored(proslava.getId());
+            if (raspored.getProslava().getId() == proslava.getId()) {
+                rasporedDAO.removeRaspored(proslava.getId());
+            }
         }
 
         if (proslava.getUkupna_cijena() > proslava.getUplacen_iznos()) {
@@ -171,6 +175,7 @@ public class KlijentController {
                 objekti.add(objekat);
             }
         }
+        objekti.sort(new KomparatorObjekata());
     }
 
     private void filterObjekti(

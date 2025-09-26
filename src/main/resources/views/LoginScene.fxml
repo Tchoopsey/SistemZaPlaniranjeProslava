@@ -36,8 +36,8 @@
           <RowConstraints maxHeight="23.0" minHeight="10.0" prefHeight="16.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button id="btnKreiraj" mnemonicParsing="false" onAction="#handleSignUp" prefHeight="26.0" prefWidth="125.0" text="Kreiraj korisnika" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
             <Button id="bntLogin" mnemonicParsing="false" onAction="#handleLogin" text="Login" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+            <Button id="btnKreiraj" mnemonicParsing="false" onAction="#handleSignUp" prefHeight="26.0" prefWidth="125.0" text="Kreiraj korisnika" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
          </children>
       </GridPane>
    </children>

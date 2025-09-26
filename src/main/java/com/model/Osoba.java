@@ -28,5 +28,13 @@ public class Osoba {
         this.prezime = prezime;
     }
 
+    public String prezimeIme() {
+        return prezime + " " + ime;
+    }
+
+    @Override
+    public String toString() {
+        return ime + " " + prezime;
+    }
 
 }

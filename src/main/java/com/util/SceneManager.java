@@ -141,4 +141,15 @@ public class SceneManager {
         mainStage.setResizable(false);
         mainStage.show();
     }
+
+    public static void showPrintajRasporedScene(Klijent klijent, Proslava proslava) throws IOException {
+        trenutnaProslava = proslava;
+        trenutniKorisnik = klijent;
+        FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource("/views/PrintajRasporedScene.fxml"));
+        Scene scene = new Scene(loader.load());
+        scene.getStylesheets().add(SceneManager.class.getResource("/style.css").toExternalForm());
+        mainStage.setScene(scene);
+        mainStage.setResizable(false);
+        mainStage.show();
+    }
 }
