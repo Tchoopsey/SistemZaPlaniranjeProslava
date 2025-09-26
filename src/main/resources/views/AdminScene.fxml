@@ -55,5 +55,6 @@
          </children>
       </GridPane>
       <Button fx:id="btnNoviAdmin" layoutX="565.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleNoviAdmin" text="Novi Admin" />
+      <Button fx:id="btnIzmjeniLozinku" layoutX="418.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleIzmjeniLozinku" text="Izmjeni Lozinku" />
    </children>
 </Pane>

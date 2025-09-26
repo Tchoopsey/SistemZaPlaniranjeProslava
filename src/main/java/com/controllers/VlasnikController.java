@@ -5,11 +5,13 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.dao.MeniDAO;
 import com.dao.ObavjestenjeDAO;
 import com.dao.ObjekatDAO;
 import com.dao.StoDAO;
+import com.dao.VlasnikDAO;
 import com.model.BankovniRacun;
 import com.model.Meni;
 import com.model.Obavjestenje;
@@ -21,16 +23,21 @@ import com.model.Vlasnik;
 import com.util.SceneManager;
 
 import javafx.application.Platform;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.control.Alert.AlertType;
 import javafx.util.StringConverter;
 
@@ -38,6 +45,7 @@ public class VlasnikController {
 
     static Vlasnik trenutniVlasnik;
     static Obavjestenje obavjestenje;
+    static Proslava trenutnaProslava;
     @FXML Label lblIme;
     @FXML Label lblPrezime;
     @FXML Label lblKorisnickoIme;
@@ -52,6 +60,7 @@ public class VlasnikController {
     @FXML
     private void initialize() {
         setAllUserData();
+        lastSelected();
     }
 
     @FXML
@@ -62,6 +71,88 @@ public class VlasnikController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    private void handleIzmjeniLozinku() {
+        Optional<String> res = promjenaLozinke();
+        Alert alert = new Alert(AlertType.INFORMATION);
+
+        if (res.isEmpty() || res.get().trim().isEmpty()) {
+            alert.setAlertType(AlertType.WARNING);
+            alert.setHeaderText("GRESKA!");
+            alert.setContentText("Nekorektan unos!");
+            alert.showAndWait();
+            return;
+        } else if (res.get().equals("GRESKA1")) {
+            alert.setAlertType(AlertType.WARNING);
+            alert.setHeaderText("GRESKA!");
+            alert.setContentText("Stara lozinka nije ispravna!");
+            alert.showAndWait();
+            return;
+        } else if (res.get().equals("GRESKA2")) {
+            alert.setAlertType(AlertType.WARNING);
+            alert.setHeaderText("GRESKA!");
+            alert.setContentText("Potvrdite novu lozinku!");
+            alert.showAndWait();
+            return;
+        } else if (res.get().equals("GRESKA3")) {
+            alert.setAlertType(AlertType.WARNING);
+            alert.setHeaderText("GRESKA!");
+            alert.setContentText("Unesite novu lozinku!");
+            alert.showAndWait();
+            return;
+        }
+
+        String novaLozinka = res.get().trim();
+
+        trenutniVlasnik.setPassword(novaLozinka);
+        VlasnikDAO dao = new VlasnikDAO();
+        dao.updateVlasnik(trenutniVlasnik, trenutniVlasnik.getJmbg());
+
+        alert.setHeaderText("Uspjesno ste promjenili lozinku!!!");
+        alert.showAndWait();
+    }
+
+    private Optional<String> promjenaLozinke() {
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("Promjena Lozinke");
+        dialog.setHeaderText("Promjenite lozinku:");
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        PasswordField pfStaraLozinka = new PasswordField();
+        PasswordField pfNovaLozinka = new PasswordField();
+        PasswordField pfPotvrda = new PasswordField();
+        Label lblStaraLozinka = new Label("Stara Lozinka:");
+        Label lblNovaLozinka = new Label("Nova Lozinka:");
+        Label lblPotvrda = new Label("Potvrda Lozinke:");
+
+        VBox vBox = new VBox(10);
+        HBox hBoxStara = new HBox(10);
+        hBoxStara.getChildren().addAll(lblStaraLozinka, pfStaraLozinka);
+        HBox hBoxNova = new HBox(10);
+        hBoxNova.getChildren().addAll(lblNovaLozinka, pfNovaLozinka);
+        HBox hBoxPotvrda = new HBox(10);
+        hBoxPotvrda.getChildren().addAll(lblPotvrda, pfPotvrda);
+        vBox.getChildren().addAll(hBoxStara, hBoxNova, hBoxPotvrda);
+        dialog.getDialogPane().setContent(vBox);
+
+        dialog.setResultConverter(button -> {
+            if (button == ButtonType.OK) {
+                if (!pfStaraLozinka.getText().equals(trenutniVlasnik.getPassword())) {
+                    return "GRESKA1";
+                } else if (!pfNovaLozinka.getText().equals(pfPotvrda.getText())) {
+                    return "GRESKA2";
+                } else if (pfNovaLozinka.getText().length() == 0) {
+                    return "GRESKA3";
+                }
+
+                return pfNovaLozinka.getText();
+            }
+            return null;
+        });
+        
+        return dialog.showAndWait();
     }
 
     @FXML
@@ -96,6 +187,58 @@ public class VlasnikController {
         taObjekat.setText(taText);
 
         getRezervacije(selected);
+    }
+
+    @FXML
+    private void handlePogledajRezervaciju() {
+        if (trenutnaProslava != null) {
+            infoRezervacije();
+        } else {
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setContentText("Nema izabrane proslave!");
+            alert.showAndWait();
+        }
+    }
+
+    private void infoRezervacije() {
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("Rezervacija");
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK);
+
+
+        VBox vBox = new VBox(10);
+        TextArea taRezervacija = new TextArea();
+        taRezervacija.setEditable(false);
+        String rezervacija = "";
+        rezervacija += "Klijent: " + trenutnaProslava.getKlijent() + "\n";
+        rezervacija += "Broj gostiju: " + trenutnaProslava.getBroj_gostiju() + "\n";
+        rezervacija += "Zarada: " + trenutnaProslava.getUkupna_cijena() + "\n";
+        taRezervacija.setText(rezervacija);
+
+        vBox.getChildren().add(taRezervacija);
+        dialog.getDialogPane().setContent(vBox);
+        
+        dialog.showAndWait();
+    }
+
+    private void lastSelected() {
+        lvProslave.getSelectionModel().getSelectedItems().addListener((ListChangeListener<Proslava>) c -> {
+            if (!c.getList().isEmpty()) {
+                trenutnaProslava = c.getList().get(0);
+            }
+        });
+
+        lvProtekleProslave.getSelectionModel().getSelectedItems().addListener((ListChangeListener<Proslava>) c -> {
+            if (!c.getList().isEmpty()) {
+                trenutnaProslava = c.getList().get(0);
+            }
+        });
+
+        lvOtkazaneProslave.getSelectionModel().getSelectedItems().addListener((ListChangeListener<Proslava>) c -> {
+            if (!c.getList().isEmpty()) {
+                trenutnaProslava = c.getList().get(0);
+            }
+        });
     }
 
     private void setAllUserData() {
@@ -160,7 +303,7 @@ public class VlasnikController {
         }
         return null;
     }
-    
+
     private void setFormat() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 

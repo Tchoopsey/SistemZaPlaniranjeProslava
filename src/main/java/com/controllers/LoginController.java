@@ -9,9 +9,11 @@ import com.model.Vlasnik;
 import com.util.SceneManager;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 
 public class LoginController {
 
@@ -62,6 +64,9 @@ public class LoginController {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        } else {
+            Alert alert = new Alert(AlertType.WARNING);
+            alert.setHeaderText("Unijeli ste pogresno korisnicko ime ili lozinku!!!");
         }
 
     }

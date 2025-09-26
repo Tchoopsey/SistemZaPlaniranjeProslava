@@ -3,6 +3,7 @@ package com.controllers;
 import java.io.IOException;
 import java.util.Optional;
 
+import com.dao.AdminDAO;
 import com.dao.ObavjestenjeDAO;
 import com.dao.ObjekatDAO;
 import com.model.Admin;
@@ -14,9 +15,14 @@ import com.util.SceneManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.control.Alert.AlertType;
 
 public class AdminController {
@@ -53,6 +59,88 @@ public class AdminController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    private void handleIzmjeniLozinku() {
+        Optional<String> res = promjenaLozinke();
+        Alert alert = new Alert(AlertType.INFORMATION);
+
+        if (res.isEmpty() || res.get().trim().isEmpty()) {
+            alert.setAlertType(AlertType.WARNING);
+            alert.setHeaderText("GRESKA!");
+            alert.setContentText("Nekorektan unos!");
+            alert.showAndWait();
+            return;
+        } else if (res.get().equals("GRESKA1")) {
+            alert.setAlertType(AlertType.WARNING);
+            alert.setHeaderText("GRESKA!");
+            alert.setContentText("Stara lozinka nije ispravna!");
+            alert.showAndWait();
+            return;
+        } else if (res.get().equals("GRESKA2")) {
+            alert.setAlertType(AlertType.WARNING);
+            alert.setHeaderText("GRESKA!");
+            alert.setContentText("Potvrdite novu lozinku!");
+            alert.showAndWait();
+            return;
+        } else if (res.get().equals("GRESKA3")) {
+            alert.setAlertType(AlertType.WARNING);
+            alert.setHeaderText("GRESKA!");
+            alert.setContentText("Unesite novu lozinku!");
+            alert.showAndWait();
+            return;
+        }
+
+        String novaLozinka = res.get().trim();
+
+        trenutniAdmin.setPassword(novaLozinka);
+        AdminDAO dao = new AdminDAO();
+        dao.updateAdmin(trenutniAdmin, trenutniAdmin.getKorisnicko_ime());
+
+        alert.setHeaderText("Uspjesno ste promjenili lozinku!!!");
+        alert.showAndWait();
+    }
+
+    private Optional<String> promjenaLozinke() {
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("Promjena Lozinke");
+        dialog.setHeaderText("Promjenite lozinku:");
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        PasswordField pfStaraLozinka = new PasswordField();
+        PasswordField pfNovaLozinka = new PasswordField();
+        PasswordField pfPotvrda = new PasswordField();
+        Label lblStaraLozinka = new Label("Stara Lozinka:");
+        Label lblNovaLozinka = new Label("Nova Lozinka:");
+        Label lblPotvrda = new Label("Potvrda Lozinke:");
+
+        VBox vBox = new VBox(10);
+        HBox hBoxStara = new HBox(10);
+        hBoxStara.getChildren().addAll(lblStaraLozinka, pfStaraLozinka);
+        HBox hBoxNova = new HBox(10);
+        hBoxNova.getChildren().addAll(lblNovaLozinka, pfNovaLozinka);
+        HBox hBoxPotvrda = new HBox(10);
+        hBoxPotvrda.getChildren().addAll(lblPotvrda, pfPotvrda);
+        vBox.getChildren().addAll(hBoxStara, hBoxNova, hBoxPotvrda);
+        dialog.getDialogPane().setContent(vBox);
+
+        dialog.setResultConverter(button -> {
+            if (button == ButtonType.OK) {
+                if (!pfStaraLozinka.getText().equals(trenutniAdmin.getPassword())) {
+                    return "GRESKA1";
+                } else if (!pfNovaLozinka.getText().equals(pfPotvrda.getText())) {
+                    return "GRESKA2";
+                } else if (pfNovaLozinka.getText().length() == 0) {
+                    return "GRESKA3";
+                }
+
+                return pfNovaLozinka.getText();
+            }
+            return null;
+        });
+        
+        return dialog.showAndWait();
     }
 
     @FXML
