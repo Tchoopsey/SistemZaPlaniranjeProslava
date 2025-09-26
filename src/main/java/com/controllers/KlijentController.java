@@ -284,7 +284,7 @@ public class KlijentController {
                 boolean matchBrojMjesta;
                 try {
                     matchBrojMjesta = brojMjesta.isEmpty() ||
-                        objekat.getBroj_mjesta() <= Integer.parseInt(tfBrojMjesta.getText());
+                        objekat.getBroj_mjesta() >= Integer.parseInt(tfBrojMjesta.getText());
                 } catch (NumberFormatException e) {
                     matchBrojMjesta = true;
                 }
