@@ -59,10 +59,9 @@ public class Admin extends Korisnik {
         admins.removeIf(a -> a.getKorisnicko_ime().equals(korisnicko_ime));
     }
 
-    public static Admin getAdmin(String user, String pass) {
+    public static Admin getAdmin(String user) {
         for (Admin admin : admins) {
-            if (admin.getPassword().equals(pass) &&
-                admin.getKorisnicko_ime().equals(user)) {
+            if (admin.getKorisnicko_ime().equals(user)) {
                 return admin;
             }
         }

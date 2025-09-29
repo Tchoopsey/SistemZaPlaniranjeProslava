@@ -89,10 +89,9 @@ public class Klijent extends Korisnik {
         this.broj_telefona = broj_telefona;
     }
 
-    public static Klijent getKlijent(String user, String pass) {
+    public static Klijent getKlijent(String user) {
         for (Klijent klijent : klijenti) {
-            if (klijent.getPassword().equals(pass) &&
-                klijent.getKorisnicko_ime().equals(user)) {
+            if (klijent.getKorisnicko_ime().equals(user)) {
                 return klijent;
             }
         }

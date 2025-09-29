@@ -33,8 +33,12 @@ public class LoginController {
         String lozinka = pfLozinka.getText();
 
         if (Korisnik.checkKorisnicko_ime(korisnicko_ime).equals("Admin")) {
-            Admin admin = Admin.getAdmin(korisnicko_ime, lozinka);
+            Admin admin = Admin.getAdmin(korisnicko_ime);
             if (admin == null) return;
+            if (!admin.getPassword().equals(lozinka)) {
+                alertUnknown();
+                return;
+            }
 
             try {
                 System.out.println("Creating Admin scene...");
@@ -44,8 +48,12 @@ public class LoginController {
             }
 
         } else if (Korisnik.checkKorisnicko_ime(korisnicko_ime).equals("Vlasnik")) {
-            Vlasnik vlasnik = Vlasnik.getVlasnik(korisnicko_ime, lozinka);
+            Vlasnik vlasnik = Vlasnik.getVlasnik(korisnicko_ime);
             if (vlasnik == null) return;
+            if (!vlasnik.getPassword().equals(lozinka)) {
+                alertUnknown();
+                return;
+            }
 
             try {
                 System.out.println("Creating Vlasnik scene...");
@@ -55,8 +63,12 @@ public class LoginController {
             }
 
         } else if (Korisnik.checkKorisnicko_ime(korisnicko_ime).equals("Klijent")) {
-            Klijent klijent = Klijent.getKlijent(korisnicko_ime, lozinka);
+            Klijent klijent = Klijent.getKlijent(korisnicko_ime);
             if (klijent == null) return;
+            if (!klijent.getPassword().equals(lozinka)) {
+                alertUnknown();
+                return;
+            }
 
             try {
                 System.out.println("Creating Klijent scene...");
@@ -67,8 +79,17 @@ public class LoginController {
         } else {
             Alert alert = new Alert(AlertType.WARNING);
             alert.setHeaderText("Unijeli ste pogresno korisnicko ime ili lozinku!!!");
+            alert.showAndWait();
+            return;
         }
 
+    }
+
+    private void alertUnknown() {
+        Alert alert = new Alert(AlertType.WARNING);
+        alert.setHeaderText("Unijeli ste pogresnu lozinku!!!");
+        alert.showAndWait();
+        return;
     }
 
     @FXML

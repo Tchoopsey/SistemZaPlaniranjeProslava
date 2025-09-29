@@ -87,6 +87,7 @@ public class KlijentController {
         List<String> datumi = objekat.getDatumi();
         datumi.remove(proslava.getDatum().toString());
         objekat.setDatumi(datumi);
+        objekat.setZarada(objekat.getZarada() - proslava.getUplacen_iznos());
         ObjekatDAO objekatDAO = new ObjekatDAO();
         objekatDAO.updateObjekat(objekat, objekat.getNaziv());
 
@@ -97,15 +98,15 @@ public class KlijentController {
             }
         }
 
-        if (proslava.getUkupna_cijena() > proslava.getUplacen_iznos()) {
-            oduzmiNovacVlasniku(proslava.getUplacen_iznos(), objekat);
-            dodajNovacKlijentu(proslava.getUplacen_iznos());
-        }
+        oduzmiNovacVlasniku(proslava.getUplacen_iznos(), objekat);
+
+        dodajNovacKlijentu(proslava.getUplacen_iznos());
 
         proslava.setStatus("Otkazana");
         ProslavaDAO proslavaDAO = new ProslavaDAO();
         proslavaDAO.updateProslava(proslava, proslava.getId());
 
+        setAllUserData();
         getRezervacije();
     }
 

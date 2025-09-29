@@ -99,10 +99,9 @@ public class Vlasnik extends Korisnik {
         this.broj_telefona = broj_telefona;
     }
 
-    public static Vlasnik getVlasnik(String user, String pass) {
+    public static Vlasnik getVlasnik(String user) {
         for (Vlasnik vlasnik : vlasnici) {
-            if (vlasnik.getPassword().equals(pass) &&
-                vlasnik.getKorisnicko_ime().equals(user)) {
+            if (vlasnik.getKorisnicko_ime().equals(user)) {
                 return vlasnik;
             }
         }

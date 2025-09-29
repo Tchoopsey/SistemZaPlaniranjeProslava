@@ -123,13 +123,22 @@ public class IzmjeniRezervacijuController {
         } 
 
         double ostatak_uplate = broj_gostiju * meni.getCijena_po_osobi();
-        double ukupna_cijena = trenutnaProslava.getUplacen_iznos() 
-            + ostatak_uplate;
+        double uplacen_iznos = trenutnaProslava.getUplacen_iznos();
+        ostatak_uplate -= uplacen_iznos;
 
+        double ukupna_cijena = ostatak_uplate +
+            trenutnaProslava.getUkupna_cijena();
+
+        if (!checkStanjeNaRacunu(ostatak_uplate)) {
+            alert.setHeaderText("Niste solventni!");
+            alert.showAndWait();
+            return;
+        }
 
         trenutnaProslava.setMeni(meni);
         trenutnaProslava.setUkupna_cijena(ukupna_cijena);
-        trenutnaProslava.setUplacen_iznos(ostatak_uplate);
+
+        trenutnaProslava.setUplacen_iznos(uplacen_iznos+ostatak_uplate);
 
         trenutniObjekat.setZarada(trenutniObjekat.getZarada() + ostatak_uplate);
         ObjekatDAO objekatDAO = new ObjekatDAO();
@@ -139,14 +148,6 @@ public class IzmjeniRezervacijuController {
         proslavaDAO.updateProslava(trenutnaProslava,
             trenutnaProslava.getId());
 
-
-        RasporedDAO rasporedDAO = new RasporedDAO();
-        for (Raspored raspored : rasporedi) {
-            raspored.setProslava(trenutnaProslava);
-            rasporedDAO.createRaspored(raspored);
-        }
-
-        unesiLozinku();
 
         oduzmiNovacKlijentu(ostatak_uplate);
         dodajNovacVlasniku(ostatak_uplate);
@@ -205,6 +206,19 @@ public class IzmjeniRezervacijuController {
                 return;
             } 
         }
+    }
+
+    private boolean checkStanjeNaRacunu(double uplacen_iznos) {
+        String broj_racuna = trenutniKlijent.getBroj_racuna();
+
+        for (BankovniRacun racun : BankovniRacun.getRacuni()) {
+            if (racun.getBroj_racuna().equals(broj_racuna)) {
+                if ((racun.getStanje() - uplacen_iznos) < 0) {
+                    return false;
+                }
+            } 
+        }
+        return true;
     }
 
     @FXML
@@ -313,6 +327,7 @@ public class IzmjeniRezervacijuController {
     }
 
     private void setStolovi() {
+        cbSto.getItems().clear();
         int id = 1;
         for (Sto sto : Sto.getSviStolovi()) {
             if (sto.getObjekat() == trenutniObjekat) {
@@ -324,6 +339,7 @@ public class IzmjeniRezervacijuController {
     }
 
     private void setMeniji() {
+        cbMeni.getItems().clear();
         int id = 1;
         for (Meni meni : Meni.getSviMeniji()) {
             if (meni.getObjekat() == trenutniObjekat) {

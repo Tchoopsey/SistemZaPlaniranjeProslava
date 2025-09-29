@@ -104,6 +104,12 @@ public class NovaRezervacijaController {
             return;
         }
 
+        if (!checkStanjeNaRacunu(uplacen_iznos)) {
+            alert.setHeaderText("Niste solventni!");
+            alert.showAndWait();
+            return;
+        }
+
         Proslava proslava = new Proslava(
             0, 
             trenutniObjekat, 
@@ -113,7 +119,7 @@ public class NovaRezervacijaController {
             datum, 
             0, 
             uplacen_iznos, 
-            uplacen_iznos
+            0
         );
 
         ProslavaDAO proslavaDAO = new ProslavaDAO();
@@ -186,6 +192,19 @@ public class NovaRezervacijaController {
                 return;
             } 
         }
+    }
+
+    private boolean checkStanjeNaRacunu(double uplacen_iznos) {
+        String broj_racuna = trenutniKlijent.getBroj_racuna();
+
+        for (BankovniRacun racun : BankovniRacun.getRacuni()) {
+            if (racun.getBroj_racuna().equals(broj_racuna)) {
+                if ((racun.getStanje() - uplacen_iznos) < 0) {
+                    return false;
+                }
+            } 
+        }
+        return true;
     }
 
     @FXML
