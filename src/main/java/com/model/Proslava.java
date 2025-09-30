@@ -1,6 +1,7 @@
 package com.model;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -150,7 +151,8 @@ public class Proslava {
 
     @Override
     public String toString() {
-        return this.datum.toString();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        return this.datum.format(formatter);
     }
 
 }

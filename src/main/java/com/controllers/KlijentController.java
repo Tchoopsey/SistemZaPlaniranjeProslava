@@ -2,6 +2,8 @@ package com.controllers;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -291,8 +293,21 @@ public class KlijentController {
                     matchBrojMjesta = true;
                 }
 
-                boolean matchDatum = datum.isEmpty() ||
-                    !objekat.getDatumi().contains(datum);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+                boolean matchDatum;
+                if (datum.isEmpty()) {
+                    matchDatum = true;
+                } else {
+                    try {
+                        LocalDate searchDatum = LocalDate.parse(datum, formatter);
+                        matchDatum = objekat.getDatumi().stream()
+                            .map(d -> LocalDate.parse(d, formatter))
+                            .anyMatch(anyDatum -> anyDatum.equals(searchDatum));
+                    } catch (DateTimeParseException e) {
+                        matchDatum = true;
+                    }
+                }
+
                 boolean matchGrad = grad.isEmpty() ||
                     objekat.getGrad().toLowerCase().contains(grad);
 
