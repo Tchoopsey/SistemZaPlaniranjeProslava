@@ -148,7 +148,6 @@ public class IzmjeniRezervacijuController {
         proslavaDAO.updateProslava(trenutnaProslava,
             trenutnaProslava.getId());
 
-
         oduzmiNovacKlijentu(ostatak_uplate);
         dodajNovacVlasniku(ostatak_uplate);
 

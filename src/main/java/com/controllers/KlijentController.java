@@ -25,13 +25,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.GridPane;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
@@ -216,15 +216,16 @@ public class KlijentController {
         Label lblNovaLozinka = new Label("Nova Lozinka:");
         Label lblPotvrda = new Label("Potvrda Lozinke:");
 
-        VBox vBox = new VBox(10);
-        HBox hBoxStara = new HBox(10);
-        hBoxStara.getChildren().addAll(lblStaraLozinka, pfStaraLozinka);
-        HBox hBoxNova = new HBox(10);
-        hBoxNova.getChildren().addAll(lblNovaLozinka, pfNovaLozinka);
-        HBox hBoxPotvrda = new HBox(10);
-        hBoxPotvrda.getChildren().addAll(lblPotvrda, pfPotvrda);
-        vBox.getChildren().addAll(hBoxStara, hBoxNova, hBoxPotvrda);
-        dialog.getDialogPane().setContent(vBox);
+        GridPane gridPane = new GridPane(3, 3);
+        gridPane.setPadding(new Insets(4));
+        gridPane.add(lblStaraLozinka, 0, 0);
+        gridPane.add(lblNovaLozinka, 0, 1);
+        gridPane.add(lblPotvrda, 0, 2);
+        gridPane.add(pfStaraLozinka, 1, 0);
+        gridPane.add(pfNovaLozinka, 1, 1);
+        gridPane.add(pfPotvrda, 1, 2);
+
+        dialog.getDialogPane().setContent(gridPane);
 
         dialog.setResultConverter(button -> {
             if (button == ButtonType.OK) {
